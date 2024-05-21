@@ -17,7 +17,7 @@ public class Juego extends InterfaceJuego {
 	
 	//Agregue este comentario para testear el github
 	//Comentario de mati
-	
+	//Comentario de Fran
 
 	
 	
