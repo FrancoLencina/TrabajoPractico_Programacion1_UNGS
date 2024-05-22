@@ -15,6 +15,8 @@ public class Juego extends InterfaceJuego {
 	Bala bala;
 	Antizanahorias[] numeles;
 	
+	//Comentario de Fran
+	
 	
 	public Juego() {
 		//Inicializa el objeto entorno
