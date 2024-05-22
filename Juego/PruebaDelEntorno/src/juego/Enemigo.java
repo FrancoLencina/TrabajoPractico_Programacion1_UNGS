@@ -2,9 +2,9 @@ package juego;
 import entorno.Entorno;
 import entorno.Herramientas;
 
-public class Antizanahorias extends Entidad{
+public class Enemigo extends Entidad{
 
-	public Antizanahorias(double x, double y) {
+	public Enemigo(double x, double y) {
 		super(x,y);
 		this.x = x;
 		this.y = y;

@@ -6,12 +6,12 @@ import java.awt.Image;
 import entorno.Entorno;
 import entorno.Herramientas;
 
-public class Bartolome extends Entidad {
+public class Jugador extends Entidad {
 	boolean estaSaltando; //false = no esta saltando
 	int contadorSalto;
 
 
-	public Bartolome(double x, double y) {
+	public Jugador(double x, double y) {
 		super(x,y);
 		this.x = x;
 		this.y = y;

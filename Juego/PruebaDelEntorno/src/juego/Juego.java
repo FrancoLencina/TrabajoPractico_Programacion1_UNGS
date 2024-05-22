@@ -10,24 +10,22 @@ public class Juego extends InterfaceJuego {
 
 	// El objeto Entorno que controla el tiempo y otros
 	private Entorno entorno;
-	Bartolome bart;
+	Jugador jugador;
 	Piso[] p;
 	Bala bala;
-	Antizanahorias[] numeles;
+	Enemigo[] enemigos;
 	
-	//Comentario de Fran
 	
 	
 	public Juego() {
 		//Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Super Duper Juego", 800, 600);
-		
+		this.entorno = new Entorno(this, "Juego", 800, 600);
 		//Inicialización de las Entidades
-		bart = new Bartolome(300, 542);
-		numeles = new Antizanahorias[8];
+		jugador = new Jugador(300, 542);
+		enemigos = new Enemigo[8];
 		int ene= 420;
-		for (int i=0; i<numeles.length;i++) {
-			numeles[i] = new Antizanahorias((int) (Math.random()*770) + 30 , ene);
+		for (int i=0; i<enemigos.length;i++) {
+			enemigos[i] = new Enemigo((int) (Math.random()*770) + 30 , ene);
 			if (i%2==1) {
 				ene-=122;
 			}
@@ -52,57 +50,57 @@ public class Juego extends InterfaceJuego {
 	public void tick() {
 		//Procesamiento de un instante de tiempo
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA)) {
-			bart.moverse(true);
+			jugador.moverse(true);
 		}
 		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
-			bart.moverse(false);
+			jugador.moverse(false);
 		}
 		if(bala == null && entorno.estaPresionada(entorno.TECLA_ESPACIO)) {
-			bala = new Bala(bart.x, bart.y, bart.dir);
+			bala = new Bala(jugador.x, jugador.y, jugador.dir);
 		}
-		if(entorno.estaPresionada(entorno.TECLA_ARRIBA) && bart.estaApoyado) {
-			bart.estaSaltando = true;
+		if(entorno.estaPresionada(entorno.TECLA_ARRIBA) && jugador.estaApoyado) {
+			jugador.estaSaltando = true;
 		}
-		if(entorno.estaPresionada(entorno.TECLA_DERECHA) && bart.estaSaltando) {
-			bart.moverse(true);
+		if(entorno.estaPresionada(entorno.TECLA_DERECHA) && jugador.estaSaltando) {
+			jugador.moverse(true);
 		}
-		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && bart.estaSaltando) {
-			bart.moverse(false);
+		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && jugador.estaSaltando) {
+			jugador.moverse(false);
 		}
-		if(entorno.estaPresionada(entorno.TECLA_DERECHA)&& bart.estaCayendo) {
-			bart.moverse(true);
+		if(entorno.estaPresionada(entorno.TECLA_DERECHA)&& jugador.estaCayendo) {
+			jugador.moverse(true);
 		}
-		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)&& bart.estaCayendo) {
-			bart.moverse(false);
+		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)&& jugador.estaCayendo) {
+			jugador.moverse(false);
 		}
 		
 		//EJECUCIÓN DE METODOS DEL JUGADOR
 		
-		bart.mostrar(entorno);
-		bart.movVertical();
+		jugador.mostrar(entorno);
+		jugador.movVertical();
 		
 		
 		//Detectar colisiones con el piso
-		if(detectarApoyo(bart, p)) {
-			bart.estaApoyado = true;
+		if(detectarApoyo(jugador, p)) {
+			jugador.estaApoyado = true;
 		}
 		else {
-			bart.estaApoyado = false;
+			jugador.estaApoyado = false;
 		}
 		
-		if(detectarColision (bart, p)) {
-			bart.estaSaltando = false;
-			bart.contadorSalto = 0;
+		if(detectarColision (jugador, p)) {
+			jugador.estaSaltando = false;
+			jugador.contadorSalto = 0;
 		}
 		
-		if (detectarCostado (bart,p)) {
+		if (detectarCostado (jugador,p)) {
 			System.out.println("toque el costado del bloque");
 		}
 		
 		//Detectar colisiones con el enemigo
-		for (int i=0; i<numeles.length;i++) {
-			if (numeles[i]!=null) {
-				if(detectarColisionEnemigo(bart, numeles[i])) {
+		for (int i=0; i<enemigos.length;i++) {
+			if (enemigos[i]!=null) {
+				if(detectarColisionEnemigo(jugador, enemigos[i])) {
 					System.out.println("se golpearon");
 					}
 				}
@@ -110,47 +108,47 @@ public class Juego extends InterfaceJuego {
 		
 		
 		//EJECUCIÓN DE METODOS DEL ENEMIGO
-		for (int i=0; i<numeles.length;i++) {
-			if (numeles[i]!=null) {
-				numeles[i].mostrar(entorno);
-				numeles[i].movVertical();
+		for (int i=0; i<enemigos.length;i++) {
+			if (enemigos[i]!=null) {
+				
+				
+				//Mostrar
+				enemigos[i].mostrar(entorno);
+				
+				//Moverse
+				enemigos[i].moverse(entorno);
+				
+				//Caer
+				enemigos[i].movVertical();
+				
+				//Detectar apoyo con el piso
+				if(detectarApoyo(enemigos[i], p)) {
+					enemigos[i].estaApoyado = true;
+				}
+				else {
+					enemigos[i].estaApoyado = false;
 				}
 			}
-		
-		//Detectar colisiones con el piso
-		for (int i=0; i<numeles.length;i++) {
-			if (numeles[i]!=null) {
-				if(detectarApoyo(numeles[i], p)) {
-					numeles[i].estaApoyado = true;
-					}
-				else {
-					numeles[i].estaApoyado = false;
-					}
-				}
 		}
 		
-		//if (numeles[i]!=null) {detectarColision (numel, p);}
-		
-		//moverse
-		for (int i=0; i<numeles.length;i++) {
-			if (numeles[i]!=null) {
-				numeles[i].moverse(entorno);
-				}
-		}
+	
 		
 		
 		
-		//Comportamieto de la bala
+		
+		//COMPORTAMIENTO DE LA BALA
 		if(bala != null) {
 			bala.mostrar(entorno);
 			bala.moverse();
 			
 			
-			//TODAVIA NO FUNCIONA (falta hacer que el enemigo desaparezca después de que le pegue la bala)
-			for (int i=0; i<numeles.length;i++) {
-				if(detectarColisionBala(numeles[i], bala)) {
+			//Detectar disparo
+			for (int i=0; i<enemigos.length;i++) {
+				if (enemigos[i] != null) {
+					if (detectarColisionBala(enemigos[i], bala)) {
 					/*bala=null;
-					numeles[i]=null;*/}
+					enemigos[i]=null;*/}
+					}
 				}
 		}
 		
@@ -176,16 +174,16 @@ public class Juego extends InterfaceJuego {
 	}
 	
 	
-	public boolean detectarApoyo(Entidad ba, Bloque bl) {
-		return Math.abs((ba.getPiso() - bl.getTecho())) < 2 && 
-				(ba.getIzquierdo() < (bl.getDerecho())) &&
-				(ba.getDerecho() > (bl.getIzquierdo()));		
+	public boolean detectarApoyo(Entidad ju, Bloque bl) {
+		return Math.abs((ju.getPiso() - bl.getTecho())) < 2 && 
+				(ju.getIzquierdo() < (bl.getDerecho())) &&
+				(ju.getDerecho() > (bl.getIzquierdo()));		
 	}
 
 	
-	public boolean detectarApoyo(Entidad ba, Piso pi) {
+	public boolean detectarApoyo(Entidad ju, Piso pi) {
 		for(int i = 0; i < pi.bloques.length; i++) {
-			if(pi.bloques[i] != null && detectarApoyo(ba, pi.bloques[i])) {
+			if(pi.bloques[i] != null && detectarApoyo(ju, pi.bloques[i])) {
 				return true;
 			}
 		}
@@ -193,9 +191,9 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	public boolean detectarApoyo(Entidad ba, Piso[] pisos) {
+	public boolean detectarApoyo(Entidad ju, Piso[] pisos) {
 		for(int i = 0; i < pisos.length; i++) {
-			if(detectarApoyo(ba, pisos[i])) {
+			if(detectarApoyo(ju, pisos[i])) {
 				return true;
 			}
 		}
@@ -203,15 +201,15 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	public boolean detectarColision(Entidad ba, Bloque bl) {
-		return Math.abs((ba.getTecho() - bl.getPiso())) < 3.5 && 
-				(ba.getIzquierdo() < (bl.getDerecho())) &&
-				(ba.getDerecho() > (bl.getIzquierdo()));		
+	public boolean detectarColision(Entidad ju, Bloque bl) {
+		return Math.abs((ju.getTecho() - bl.getPiso())) < 3.5 && 
+				(ju.getIzquierdo() < (bl.getDerecho())) &&
+				(ju.getDerecho() > (bl.getIzquierdo()));		
 	}
 	
-	public boolean detectarColision(Entidad ba, Piso pi) {
+	public boolean detectarColision(Entidad ju, Piso pi) {
 		for(int i = 0; i < pi.bloques.length; i++) {
-			if(pi.bloques[i] != null && detectarColision(ba, pi.bloques[i])) {
+			if(pi.bloques[i] != null && detectarColision(ju, pi.bloques[i])) {
 				if(pi.bloques[i].rompible) {
 					pi.bloques[i] = null;
 				}
@@ -222,9 +220,9 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	public boolean detectarColision(Entidad ba, Piso[] pisos) {
+	public boolean detectarColision(Entidad ju, Piso[] pisos) {
 		for(int i = 0; i < pisos.length; i++) {
-			if(detectarColision(ba, pisos[i])) {
+			if(detectarColision(ju, pisos[i])) {
 				return true;
 			}
 		}
@@ -232,16 +230,16 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	public boolean detectarCostado(Entidad ba, Bloque bl) {
-		return (Math.abs(ba.getDerecho() - bl.getIzquierdo()) < 3.5 ||
-				Math.abs(ba.getIzquierdo() - bl.getDerecho()) < 3.5) &&
-				bl.getTecho()<ba.getPiso()&&
-				bl.getPiso()>ba.getTecho();
+	public boolean detectarCostado(Entidad ju, Bloque bl) {
+		return (Math.abs(ju.getDerecho() - bl.getIzquierdo()) < 1.5 ||
+				Math.abs(ju.getIzquierdo() - bl.getDerecho()) < 1.5) &&
+				bl.getTecho()<ju.getPiso()&&
+				bl.getPiso()>ju.getTecho();
 		}
 	
-	public boolean detectarCostado(Entidad ba, Piso pi) {
+	public boolean detectarCostado(Entidad ju, Piso pi) {
 		for(int i = 0; i < pi.bloques.length; i++) {
-			if(pi.bloques[i] != null && detectarCostado(ba, pi.bloques[i])) {
+			if(pi.bloques[i] != null && detectarCostado(ju, pi.bloques[i])) {
 				return true;
 			}
 		}
@@ -249,9 +247,9 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	public boolean detectarCostado(Entidad ba, Piso[] pisos) {
+	public boolean detectarCostado(Entidad ju, Piso[] pisos) {
 		for(int i = 0; i < pisos.length; i++) {
-			if(detectarCostado(ba, pisos[i])) {
+			if(detectarCostado(ju, pisos[i])) {
 				return true;
 			}
 		}
@@ -259,22 +257,22 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	public boolean detectarColisionEnemigo(Entidad ba, Entidad nu) {
-		return Math.abs((ba.getPiso() - nu.getPiso())) < 3.5 && 
-				(ba.getIzquierdo() < (nu.getDerecho())) &&
-				(ba.getDerecho() > (nu.getIzquierdo()));		
+	public boolean detectarColisionEnemigo(Entidad ju, Entidad en) {
+		return Math.abs((ju.getPiso() - en.getPiso())) < 3.5 && 
+				(ju.getIzquierdo() < (en.getDerecho())) &&
+				(ju.getDerecho() > (en.getIzquierdo()));		
 	}
 	
 	
 	public boolean detectarColisionBala(Entidad en, Bala b) {
-		return (Math.abs(b.getDerecho()-en.getIzquierdo())<3.5 ||
-				Math.abs(b.getIzquierdo()-en.getDerecho())<3.5 &&
-				(b.getTecho()>en.getTecho()) &&
-				(b.getPiso()<en.getPiso()));
+		return (Math.abs(b.getDerecho() - en.getIzquierdo()) < 3.5 ||
+				Math.abs(b.getIzquierdo() - en.getDerecho()) < 3.5 &&
+				(b.y > en.getTecho()) &&
+				(b.y < en.getPiso()));
 	}
-	public boolean detectarColisionBala(Antizanahorias[] nu, Bala b) {
-		for (int i=0; i<nu.length;i++) {
-			if (detectarColisionBala(nu[i], b)) {
+	public boolean detectarColisionBala(Enemigo[] en, Bala b) {
+		for (int i=0; i<en.length;i++) {
+			if (detectarColisionBala(en[i], b)) {
 				return true;
 			}
 		}
