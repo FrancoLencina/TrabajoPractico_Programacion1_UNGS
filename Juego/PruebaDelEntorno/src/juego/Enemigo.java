@@ -5,15 +5,16 @@ import entorno.Herramientas;
 public class Enemigo extends Entidad{
 
 	public Enemigo(double x, double y) {
-		super(x,y);
 		this.x = x;
 		this.y = y;
 		this.escala = 0.08;
-		spriteIzq = Herramientas.cargarImagen("Antizanahorias_Izq.png");
-		spriteDer = Herramientas.cargarImagen("Antizanahorias_Der.png");
+		spriteIzq = Herramientas.cargarImagen("AngryDogLeft.png");
+		spriteDer = Herramientas.cargarImagen("AngryDogRight.png");
 		this.estaApoyado = true;
 		this.alto = spriteIzq.getHeight(null) * escala;
 		this.ancho = spriteIzq.getWidth(null) * escala;
+		this.xInicial = x;
+		this.yInicial = y;
 		
 	}
 	

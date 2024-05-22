@@ -9,20 +9,23 @@ import entorno.Herramientas;
 public class Jugador extends Entidad {
 	boolean estaSaltando; //false = no esta saltando
 	int contadorSalto;
+	boolean estaMuerto;
 
 
 	public Jugador(double x, double y) {
-		super(x,y);
 		this.x = x;
 		this.y = y;
-		spriteIzq = Herramientas.cargarImagen("bodyIzq.png");
-		spriteDer = Herramientas.cargarImagen("body.png");
+		spriteIzq = Herramientas.cargarImagen("RaspberryPiLeft.png");
+		spriteDer = Herramientas.cargarImagen("RaspberryPiRight.png");
 		contadorSalto = 0;
 		estaApoyado = false;
 		estaSaltando = false;
 		estaCayendo = false;
+		estaMuerto = false;
 		alto = spriteIzq.getHeight(null) * escala;
 		ancho = spriteIzq.getWidth(null) * escala;
+		this.xInicial = x;
+		this.yInicial = y;
 		
 	}
 
@@ -35,6 +38,14 @@ public class Jugador extends Entidad {
 				this.x -= 1;
 			}
 			this.dir = dirMov;
+			
+			//Aparecer por el otro costado
+			if(x > 800) {
+				x = 0;
+			}
+			if(x < 0) {
+				x = 800;
+			}
 		}
 	}
 

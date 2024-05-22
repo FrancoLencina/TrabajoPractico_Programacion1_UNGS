@@ -23,10 +23,10 @@ public class Bloque {
 			rompible = false;
 		}
 		if(rompible) {
-			sprite = Herramientas.cargarImagen("bloque.jpg");
+			sprite = Herramientas.cargarImagen("pasto2.png");
 		}
 		else {
-			sprite = Herramientas.cargarImagen("bloqueIrrompible.jpg");
+			sprite = Herramientas.cargarImagen("roca2.png");
 		}
 		
 		escala = 0.2;

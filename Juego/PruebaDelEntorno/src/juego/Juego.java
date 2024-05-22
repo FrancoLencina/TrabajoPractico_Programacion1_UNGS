@@ -1,9 +1,11 @@
 package juego;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Rectangle;
 
 import entorno.Entorno;
+import entorno.Herramientas;
 import entorno.InterfaceJuego;
 
 public class Juego extends InterfaceJuego {
@@ -14,12 +16,15 @@ public class Juego extends InterfaceJuego {
 	Piso[] p;
 	Bala bala;
 	Enemigo[] enemigos;
-	
+	Image background;
 	
 	
 	public Juego() {
 		//Inicializa el objeto entorno
 		this.entorno = new Entorno(this, "Juego", 800, 600);
+		background = Herramientas.cargarImagen("fondo.jpg");
+		
+		
 		//Inicialización de las Entidades
 		jugador = new Jugador(300, 542);
 		enemigos = new Enemigo[8];
@@ -48,6 +53,9 @@ public class Juego extends InterfaceJuego {
 	}
 
 	public void tick() {
+		//Cargar Fondo
+		entorno.dibujarImagen(background, 400,300, 0);
+		
 		//Procesamiento de un instante de tiempo
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA)) {
 			jugador.moverse(true);
@@ -72,6 +80,24 @@ public class Juego extends InterfaceJuego {
 		}
 		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)&& jugador.estaCayendo) {
 			jugador.moverse(false);
+		}
+		if(jugador.estaMuerto) {
+			jugador.x=jugador.xInicial;
+			jugador.y=jugador.yInicial;
+			int ene= 420;
+			for (int i=0; i<enemigos.length;i++) {
+				enemigos[i]= null; 		
+				enemigos[i] = new Enemigo((int) (Math.random()*770) + 30 , ene);
+				if (i%2==1) {
+					ene-=122;
+				}
+				
+			}
+			for(int i = 0; i < p.length; i++) {
+				p[i] = null;
+				p[i] = new Piso(120 + i * (entorno.alto() / p.length));
+			}
+			jugador.estaMuerto=false;
 		}
 		
 		//EJECUCIÓN DE METODOS DEL JUGADOR
@@ -102,6 +128,7 @@ public class Juego extends InterfaceJuego {
 			if (enemigos[i]!=null) {
 				if(detectarColisionEnemigo(jugador, enemigos[i])) {
 					System.out.println("se golpearon");
+					jugador.estaMuerto = true;
 					}
 				}
 		}

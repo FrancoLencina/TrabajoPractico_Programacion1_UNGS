@@ -18,11 +18,11 @@ public class Entidad {
 		double alto;
 		double ancho;
 		boolean estaCayendo;
+		double xInicial;
+		double yInicial;
 		
 		
-		public Entidad(Double x, double y) {
-			this.x = x;
-			this.y = y;
+		public Entidad() {
 			spriteIzq = Herramientas.cargarImagen("missigno.png");
 			spriteDer = Herramientas.cargarImagen("missigno.png");
 			dir = true;
