@@ -15,11 +15,6 @@ public class Juego extends InterfaceJuego {
 	Bala bala;
 	Antizanahorias numel;
 	
-	//Agregue este comentario para testear el github
-	//Comentario de mati owo
-	
-
-	
 	
 	
 	public Juego() {
@@ -73,11 +68,11 @@ public class Juego extends InterfaceJuego {
 			bart.moverse(false);
 		}
 		
-		
 		//EJECUCIÓN DE METODOS DEL JUGADOR
 		
 		bart.mostrar(entorno);
 		bart.movVertical();
+		
 		
 		//Detectar colisiones con el piso
 		if(detectarApoyo(bart, p)) {
@@ -90,6 +85,10 @@ public class Juego extends InterfaceJuego {
 		if(detectarColision (bart, p)) {
 			bart.estaSaltando = false;
 			bart.contadorSalto = 0;
+		}
+		
+		if (detectarCostado (bart,p)) {
+			System.out.println("toque el costado del bloque");
 		}
 		
 		//Detectar colisiones con el enemigo
@@ -206,6 +205,33 @@ public class Juego extends InterfaceJuego {
 	public boolean detectarColision(Entidad ba, Piso[] pisos) {
 		for(int i = 0; i < pisos.length; i++) {
 			if(detectarColision(ba, pisos[i])) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean detectarCostado(Entidad ba, Bloque bl) {
+		return (Math.abs(ba.getDerecho() - bl.getIzquierdo()) < 3.5 ||
+				Math.abs(ba.getIzquierdo() - bl.getDerecho()) < 3.5) &&
+				bl.getTecho()<ba.getPiso()&&
+				bl.getPiso()>ba.getTecho();
+		}
+	
+	public boolean detectarCostado(Entidad ba, Piso pi) {
+		for(int i = 0; i < pi.bloques.length; i++) {
+			if(pi.bloques[i] != null && detectarCostado(ba, pi.bloques[i])) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean detectarCostado(Entidad ba, Piso[] pisos) {
+		for(int i = 0; i < pisos.length; i++) {
+			if(detectarCostado(ba, pisos[i])) {
 				return true;
 			}
 		}

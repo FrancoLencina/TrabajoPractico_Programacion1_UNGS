@@ -31,7 +31,7 @@ public class Bartolome extends Entidad {
 		if (estaApoyado || estaSaltando || estaCayendo) {
 			if (dirMov) {
 				this.x += 1;
-			} else {
+			} else{
 				this.x -= 1;
 			}
 			this.dir = dirMov;
