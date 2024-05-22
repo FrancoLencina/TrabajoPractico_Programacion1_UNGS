@@ -36,4 +36,6 @@ public class Enemigo extends Entidad{
 			}
 		}
 	}
+	
+	
 }

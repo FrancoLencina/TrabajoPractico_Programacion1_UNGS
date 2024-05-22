@@ -15,19 +15,20 @@ public class Juego extends InterfaceJuego {
 	Jugador jugador;
 	Piso[] p;
 	Bala bala;
+	Bala bomba;
 	Enemigo[] enemigos;
 	Image background;
 	
 	
 	public Juego() {
 		//Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Juego", 800, 600);
+		this.entorno = new Entorno(this, "Juego", 1000, 900);
 		background = Herramientas.cargarImagen("fondo.jpg");
 		
 		
 		//Inicialización de las Entidades
 		jugador = new Jugador(300, 542);
-		enemigos = new Enemigo[8];
+		enemigos = new Enemigo[2];
 		int ene= 420;
 		for (int i=0; i<enemigos.length;i++) {
 			enemigos[i] = new Enemigo((int) (Math.random()*770) + 30 , ene);
@@ -100,6 +101,20 @@ public class Juego extends InterfaceJuego {
 			jugador.estaMuerto=false;
 		}
 		
+		//Disparo del enemigo
+		for (int i = 0 ; i < enemigos.length ; i++) {
+			if(bomba == null && enemigos[i].getPiso() == jugador.getPiso()) {
+				if (enemigos[i].dir && enemigos[i].x<jugador.x){
+					bomba = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
+					System.out.println("pium pium! (derecha)");
+				} 
+				
+				if (!enemigos[i].dir && enemigos[i].x>jugador.x){
+					bomba = new Bala(enemigos[i].x, enemigos[i].y, !enemigos[i].dir);
+					System.out.println("pium pium! (izquierda)");
+				}
+			}
+		}
 		//EJECUCIÓN DE METODOS DEL JUGADOR
 		
 		jugador.mostrar(entorno);
