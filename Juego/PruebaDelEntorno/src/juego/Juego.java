@@ -13,8 +13,7 @@ public class Juego extends InterfaceJuego {
 	Bartolome bart;
 	Piso[] p;
 	Bala bala;
-	Antizanahorias numel;
-	
+	Antizanahorias[] numeles;
 	
 	
 	public Juego() {
@@ -23,7 +22,14 @@ public class Juego extends InterfaceJuego {
 		
 		//Inicialización de las Entidades
 		bart = new Bartolome(300, 542);
-		numel = new Antizanahorias(150,420);
+		numeles = new Antizanahorias[8];
+		int ene= 420;
+		for (int i=0; i<numeles.length;i++) {
+			numeles[i] = new Antizanahorias((int) (Math.random()*770) + 30 , ene);
+			if (i%2==1) {
+				ene-=122;
+			}
+		}
 		
 		
 		//Generación de pisos
@@ -92,36 +98,43 @@ public class Juego extends InterfaceJuego {
 		}
 		
 		//Detectar colisiones con el enemigo
-		if (numel!=null) {
-			if(detectarColisionEnemigo(bart, numel)) {
-				System.out.println("se golpearon");
+		for (int i=0; i<numeles.length;i++) {
+			if (numeles[i]!=null) {
+				if(detectarColisionEnemigo(bart, numeles[i])) {
+					System.out.println("se golpearon");
+					}
 				}
-			}
+		}
 		
 		
 		//EJECUCIÓN DE METODOS DEL ENEMIGO
-		if (numel!=null) {
-			numel.mostrar(entorno);
-			numel.movVertical();
+		for (int i=0; i<numeles.length;i++) {
+			if (numeles[i]!=null) {
+				numeles[i].mostrar(entorno);
+				numeles[i].movVertical();
+				}
 			}
 		
 		//Detectar colisiones con el piso
-		if (numel!=null) {
-			if(detectarApoyo(numel, p)) {
-			numel.estaApoyado = true;
+		for (int i=0; i<numeles.length;i++) {
+			if (numeles[i]!=null) {
+				if(detectarApoyo(numeles[i], p)) {
+					numeles[i].estaApoyado = true;
+					}
+				else {
+					numeles[i].estaApoyado = false;
+					}
+				}
 		}
-		else {
-			numel.estaApoyado = false;
-		}
-		}
-		if (numel!=null) {detectarColision (numel, p);}
+		
+		//if (numeles[i]!=null) {detectarColision (numel, p);}
 		
 		//moverse
-		if (numel!=null) {numel.moverse(entorno);}
-		
-		
-		
-		
+		for (int i=0; i<numeles.length;i++) {
+			if (numeles[i]!=null) {
+				numeles[i].moverse(entorno);
+				}
+		}
 		
 		
 		
@@ -132,7 +145,11 @@ public class Juego extends InterfaceJuego {
 			
 			
 			//TODAVIA NO FUNCIONA (falta hacer que el enemigo desaparezca después de que le pegue la bala)
-			if(detectarColisionBala(numel, bala)) {System.out.println("me dispararon"); bala=null; numel=null;}
+			for (int i=0; i<numeles.length;i++) {
+				if(detectarColisionBala(numeles[i], bala)) {
+					/*bala=null;
+					numeles[i]=null;*/}
+				}
 		}
 		
 		for(int i = 0; i < p.length; i++) {
@@ -155,6 +172,7 @@ public class Juego extends InterfaceJuego {
 	public static void main(String[] args) {
 		Juego juego = new Juego();
 	}
+	
 	
 	public boolean detectarApoyo(Entidad ba, Bloque bl) {
 		return Math.abs((ba.getPiso() - bl.getTecho())) < 2 && 
@@ -245,11 +263,20 @@ public class Juego extends InterfaceJuego {
 				(ba.getDerecho() > (nu.getIzquierdo()));		
 	}
 	
+	
 	public boolean detectarColisionBala(Entidad en, Bala b) {
 		return (Math.abs(b.getDerecho()-en.getIzquierdo())<3.5 ||
 				Math.abs(b.getIzquierdo()-en.getDerecho())<3.5 &&
 				(b.getTecho()>en.getTecho()) &&
 				(b.getPiso()<en.getPiso()));
+	}
+	public boolean detectarColisionBala(Antizanahorias[] nu, Bala b) {
+		for (int i=0; i<nu.length;i++) {
+			if (detectarColisionBala(nu[i], b)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
 	
