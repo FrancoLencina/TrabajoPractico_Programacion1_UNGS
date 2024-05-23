@@ -10,6 +10,7 @@ public class Jugador extends Entidad {
 	boolean estaSaltando; //false = no esta saltando
 	int contadorSalto;
 	boolean estaMuerto;
+	Entorno e;
 
 
 	public Jugador(double x, double y) {
@@ -30,7 +31,7 @@ public class Jugador extends Entidad {
 	}
 
 
-	public void moverse(boolean dirMov) {
+	public void moverse(boolean dirMov, Entorno e) {
 		if (estaApoyado || estaSaltando || estaCayendo) {
 			if (dirMov) {
 				this.x += 1;
@@ -40,11 +41,11 @@ public class Jugador extends Entidad {
 			this.dir = dirMov;
 			
 			//Aparecer por el otro costado
-			if(x > 800) {
+			if(x > e.ancho()) {
 				x = 0;
 			}
 			if(x < 0) {
-				x = 800;
+				x = e.ancho();
 			}
 		}
 	}
@@ -65,7 +66,4 @@ public class Jugador extends Entidad {
 			estaCayendo= true;
 		}
 	}
-	
-	
-	
 }

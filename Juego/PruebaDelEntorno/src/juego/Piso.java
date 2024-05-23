@@ -7,10 +7,12 @@ import entorno.Entorno;
 public class Piso {
 	Bloque[] bloques;
 	double y;
+	Entorno e;
 	
-	public Piso(double y) {
+	public Piso(double y, Entorno e) {
+		this.e = e ;
 		Bloque testigo = new Bloque(0, 0);
-		bloques =  new Bloque [(int) (800 / testigo.ancho) + 1];
+		bloques =  new Bloque [(int) (e.ancho() / testigo.ancho) + 1];
 		this.y = y;
 		
 		for(int i = 0; i < bloques.length; i++) {

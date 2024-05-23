@@ -1,8 +1,8 @@
 package juego;
 
-import java.awt.Color;
+//import java.awt.Color;
 import java.awt.Image;
-import java.awt.Rectangle;
+//import java.awt.Rectangle;
 
 import entorno.Entorno;
 import entorno.Herramientas;
@@ -22,28 +22,30 @@ public class Juego extends InterfaceJuego {
 	
 	public Juego() {
 		//Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Juego", 1000, 900);
+		this.entorno = new Entorno(this, "Juego", 800, 600);
 		background = Herramientas.cargarImagen("fondo.jpg");
 		
 		
+		//Generación de pisos
+				p = new Piso[5];
+				
+				for(int i = 0; i < p.length; i++) {
+					p[i] = new Piso(entorno.alto()/p.length + i * (entorno.alto() / p.length), entorno);
+				}
+				
 		//Inicialización de las Entidades
-		jugador = new Jugador(300, 542);
-		enemigos = new Enemigo[2];
-		int ene= 420;
+		jugador = new Jugador(entorno.ancho()/2, entorno.alto()-(entorno.alto()/10));
+		enemigos = new Enemigo[(p.length-1)*2];
+		double ene= entorno.alto()-entorno.alto()*0.3;
 		for (int i=0; i<enemigos.length;i++) {
-			enemigos[i] = new Enemigo((int) (Math.random()*770) + 30 , ene);
+			enemigos[i] = new Enemigo((int) (Math.random()*entorno.ancho()*0.95) + entorno.ancho()*0.04 , ene);
 			if (i%2==1) {
-				ene-=122;
+				ene-=entorno.alto()/p.length;
 			}
 		}
 		
 		
-		//Generación de pisos
-		p = new Piso[5];
 		
-		for(int i = 0; i < p.length; i++) {
-			p[i] = new Piso(120 + i * (entorno.alto() / p.length));
-		}
 		
 
 		
@@ -59,10 +61,10 @@ public class Juego extends InterfaceJuego {
 		
 		//Procesamiento de un instante de tiempo
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA)) {
-			jugador.moverse(true);
+			jugador.moverse(true,entorno);
 		}
 		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
-			jugador.moverse(false);
+			jugador.moverse(false,entorno);
 		}
 		if(bala == null && entorno.estaPresionada(entorno.TECLA_ESPACIO)) {
 			bala = new Bala(jugador.x, jugador.y, jugador.dir);
@@ -71,32 +73,30 @@ public class Juego extends InterfaceJuego {
 			jugador.estaSaltando = true;
 		}
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA) && jugador.estaSaltando) {
-			jugador.moverse(true);
+			jugador.moverse(true,entorno);
 		}
 		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && jugador.estaSaltando) {
-			jugador.moverse(false);
+			jugador.moverse(false,entorno);
 		}
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA)&& jugador.estaCayendo) {
-			jugador.moverse(true);
+			jugador.moverse(true,entorno);
 		}
 		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)&& jugador.estaCayendo) {
-			jugador.moverse(false);
+			jugador.moverse(false,entorno);
 		}
 		if(jugador.estaMuerto) {
 			jugador.x=jugador.xInicial;
 			jugador.y=jugador.yInicial;
-			int ene= 420;
+			double ene= entorno.alto()-entorno.alto()*0.3;
 			for (int i=0; i<enemigos.length;i++) {
-				enemigos[i]= null; 		
-				enemigos[i] = new Enemigo((int) (Math.random()*770) + 30 , ene);
+				enemigos[i] = new Enemigo((int) (Math.random()*entorno.ancho()*0.95) + entorno.ancho()*0.04 , ene);
 				if (i%2==1) {
-					ene-=122;
+					ene-=entorno.alto()/p.length;
 				}
-				
 			}
 			for(int i = 0; i < p.length; i++) {
 				p[i] = null;
-				p[i] = new Piso(120 + i * (entorno.alto() / p.length));
+				p[i] = new Piso(120 + i * (entorno.alto() / p.length), entorno);
 			}
 			jugador.estaMuerto=false;
 		}
