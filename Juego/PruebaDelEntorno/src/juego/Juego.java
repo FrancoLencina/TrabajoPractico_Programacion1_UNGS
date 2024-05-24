@@ -33,11 +33,19 @@ public class Juego extends InterfaceJuego {
 		//Inicialización de las Entidades
 		jugador = new Jugador(entorno.ancho()/2, entorno.alto()-(entorno.alto()/10));
 		enemigos = new Enemigo[(p.length-1)*2];
-		double ene= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
+		double yInicial= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
+		double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
 		for (int i=0; i<enemigos.length;i++) {
-			enemigos[i] = new Enemigo((int) (Math.random()*entorno.ancho()*0.95) + entorno.ancho()*0.04 , ene);
+			enemigos[i] = new Enemigo((int) (xInicial), yInicial);
+			if (i%2==0) {
+				xInicial += entorno.ancho()/3;
+				if (xInicial > entorno.ancho()) {
+					xInicial -= entorno.ancho();
+				}
+			}
 			if (i%2==1) {
-				ene-=entorno.alto()/p.length;
+				xInicial=Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
+				yInicial-=entorno.alto()/p.length;
 			}
 		}
 		//Inicialización del array de bombas
@@ -87,11 +95,19 @@ public class Juego extends InterfaceJuego {
 			bala=null;
 			jugador.x=jugador.xInicial;
 			jugador.y=jugador.yInicial;
-			double ene= entorno.alto()-entorno.alto()*0.3;
+			double yInicial= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
+			double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
 			for (int i=0; i<enemigos.length;i++) {
-				enemigos[i] = new Enemigo((int) (Math.random()*entorno.ancho()*0.95) + entorno.ancho()*0.04 , ene);
+				enemigos[i] = new Enemigo((int) (xInicial), yInicial);
+				if (i%2==0) {
+					xInicial += entorno.ancho()/3;
+					if (xInicial > entorno.ancho()) {
+						xInicial -= entorno.ancho();
+					}
+				}
 				if (i%2==1) {
-					ene-=entorno.alto()/p.length;
+					xInicial=Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
+					yInicial-=entorno.alto()/p.length;
 				}
 			}
 			for(int i = 0; i < p.length; i++) {
