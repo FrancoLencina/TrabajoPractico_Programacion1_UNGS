@@ -3,7 +3,7 @@ import entorno.Entorno;
 import entorno.Herramientas;
 
 public class Enemigo extends Entidad{
-
+	int dirInicial = (int) (Math.random()*2 + 1);
 	public Enemigo(double x, double y) {
 		this.x = x;
 		this.y = y;
@@ -15,7 +15,10 @@ public class Enemigo extends Entidad{
 		this.ancho = spriteIzq.getWidth(null) * escala;
 		this.xInicial = x;
 		this.yInicial = y;
-		
+		this.dir = true;
+		if (dirInicial == 2) {
+			this.dir = false;
+		}
 	}
 	
 	public void moverse( Entorno entorno) {
