@@ -15,20 +15,17 @@ public class Juego extends InterfaceJuego {
 	Jugador jugador;
 	Piso[] p;
 	Bala bala;
-	Bala bomba;
+	Bala[] bombas;
 	Enemigo[] enemigos;
 	Image background;
 	
 	
 	public Juego() {
 		//Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Juego", 900, 650);
+		this.entorno = new Entorno(this, "Juego", 800, 600);
 		background = Herramientas.cargarImagen("fondo.jpg");
-		
-		
 		//Generación de pisos
 				p = new Piso[5];
-				
 				for(int i = 0; i < p.length; i++) {
 					p[i] = new Piso(entorno.alto()/p.length + i * (entorno.alto() / p.length), entorno);
 				}
@@ -43,6 +40,9 @@ public class Juego extends InterfaceJuego {
 				ene-=entorno.alto()/p.length;
 			}
 		}
+		//Inicialización del array de bombas
+		
+		bombas = new Bala[enemigos.length];
 		
 		//Inicia el juego!
 		this.entorno.iniciar();
@@ -50,9 +50,12 @@ public class Juego extends InterfaceJuego {
 
 	public void tick() {
 		//Cargar Fondo
-		entorno.dibujarImagen(background, 400,300, 0);
+		entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0, entorno.alto()/600); //revisar el tema de la escala
 		
 		//Procesamiento de un instante de tiempo
+		for(int i = 0; i < p.length; i++) {
+			p[i].mostrar(entorno);
+		}
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA)) {
 			jugador.moverse(true,entorno);
 		}
@@ -78,6 +81,9 @@ public class Juego extends InterfaceJuego {
 			jugador.moverse(false,entorno);
 		}
 		if(jugador.estaMuerto) {
+			for(int i = 0; i < bombas.length; i++) {
+				bombas[i] = null;
+			}
 			bala=null;
 			jugador.x=jugador.xInicial;
 			jugador.y=jugador.yInicial;
@@ -95,20 +101,50 @@ public class Juego extends InterfaceJuego {
 			jugador.estaMuerto=false;
 		}
 		
+		//COMPORTAMIENTO DE LA BOMBA
+		for(int i = 0; i < bombas.length; i++) {
+			if(bombas[i] != null) {
+				bombas[i].spriteDer = Herramientas.cargarImagen("bomba.png");
+				bombas[i].spriteIzq = Herramientas.cargarImagen("bomba.png");
+				bombas[i].mostrar(entorno);
+				bombas[i].moverse();
+			}
+		//que la bomba desaparezca al tocar el borde de la pantalla
+			
+			if(bombas[i] != null && (bombas[i].x < -0.1 * entorno.ancho() 
+				|| bombas[i].x > entorno.ancho() * 1.1)) {
+				bombas[i] = null;
+					
+				}
+		}
 		//Disparo del enemigo
-		/*for (int i = 0 ; i < enemigos.length ; i++) {
-			if(bomba == null && enemigos[i].getPiso() == jugador.getPiso()) {
-				if (enemigos[i].dir && enemigos[i].x<jugador.x){
-					bomba = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
-					System.out.println("pium pium! (derecha)");
-				} 
+		
+					
+		for (int i = 0 ; i < enemigos.length ; i++) {
+			if (enemigos[i] != null) {
+				if( bombas[i] == null && Math.abs(enemigos[i].y-jugador.y) < 3) {
+					if (enemigos[i].dir && enemigos[i].x<jugador.x){
+						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
+						System.out.println("pium pium! (derecha)");
+					} 
 				
-				if (!enemigos[i].dir && enemigos[i].x>jugador.x){
-					bomba = new Bala(enemigos[i].x, enemigos[i].y, !enemigos[i].dir);
-					System.out.println("pium pium! (izquierda)");
+					if (!enemigos[i].dir && enemigos[i].x>jugador.x){
+						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
+						System.out.println("pium pium! (izquierda)");
+					}
 				}
 			}
-		}*/
+		}
+		
+		//Morir al tocar una bomba
+		
+		for (int i = 0; i < bombas.length; i++) {
+			if (detectarColisionBala(jugador, bombas[i])) {
+				jugador.estaMuerto = true;
+			}
+		}
+		
+	
 		//EJECUCIÓN DE METODOS DEL JUGADOR
 		
 		jugador.mostrar(entorno);
@@ -182,26 +218,19 @@ public class Juego extends InterfaceJuego {
 			for (int i=0; i<enemigos.length;i++) {
 				if (enemigos[i] != null) {
 					if (detectarColisionBala(enemigos[i], bala)) {
-					bala=null;
-					enemigos[i]=null;}
+						bala=null;
+						enemigos[i]=null;
 					}
 				}
+			}
 		}
 		
-		for(int i = 0; i < p.length; i++) {
-			p[i].mostrar(entorno);
-		}
-		
+		//Hacer que la bala desaparezca al tocar el borde de la pantalla
 		if( bala != null && (bala.x < -0.1 * entorno.ancho() 
 		|| bala.x > entorno.ancho() * 1.1)) {
 			bala = null;
 			
 		}
-		
-		
-		
-		
-		
 	}
 	
 	@SuppressWarnings("unused")
@@ -318,4 +347,3 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 }
-	

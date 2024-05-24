@@ -21,7 +21,7 @@ public class Bala {
 		escala = 0.1;
 		alto = spriteIzq.getHeight(null) * escala;
 		ancho = spriteIzq.getWidth(null) * escala;
-		this.velocidad = 3;
+		this.velocidad = 4;
 	}
 
 	public void mostrar(Entorno e) {
