@@ -132,6 +132,12 @@ public class Juego extends InterfaceJuego {
 				bombas[i] = null;
 					
 				}
+			
+			if(bombas[i] != null && bala!=null) {
+				if(balaContraBomba(bala, bombas[i])) {
+					bombas[i]=null;
+				}
+			}
 		}
 		//Disparo del enemigo
 		
@@ -141,12 +147,10 @@ public class Juego extends InterfaceJuego {
 				if( bombas[i] == null && Math.abs(enemigos[i].y-jugador.y) < 3) {
 					if (enemigos[i].dir && enemigos[i].x<jugador.x){
 						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
-						System.out.println("pium pium! (derecha)");
 					} 
 				
 					if (!enemigos[i].dir && enemigos[i].x>jugador.x){
 						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
-						System.out.println("pium pium! (izquierda)");
 					}
 				}
 			}
@@ -359,6 +363,16 @@ public class Juego extends InterfaceJuego {
 			if (detectarColisionBala(en[i], b)) {
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	public boolean balaContraBomba (Bala bom, Bala bal) {
+		if (bal!=null) {
+			return ((Math.abs(bal.getDerecho() - bom.getIzquierdo()) < 3.5 ||
+				Math.abs(bal.getIzquierdo() - bom.getDerecho()) < 3.5 )&&
+				(bal.y > bom.getTecho()) &&
+				(bal.y < bom.getPiso()));
 		}
 		return false;
 	}
