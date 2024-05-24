@@ -36,7 +36,7 @@ public class Juego extends InterfaceJuego {
 		//Inicialización de las Entidades
 		jugador = new Jugador(entorno.ancho()/2, entorno.alto()-(entorno.alto()/10));
 		enemigos = new Enemigo[(p.length-1)*2];
-		double ene= entorno.alto()-entorno.alto()*0.3;
+		double ene= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
 		for (int i=0; i<enemigos.length;i++) {
 			enemigos[i] = new Enemigo((int) (Math.random()*entorno.ancho()*0.95) + entorno.ancho()*0.04 , ene);
 			if (i%2==1) {
@@ -96,7 +96,7 @@ public class Juego extends InterfaceJuego {
 			}
 			for(int i = 0; i < p.length; i++) {
 				p[i] = null;
-				p[i] = new Piso(120 + i * (entorno.alto() / p.length), entorno);
+				p[i] = new Piso(entorno.alto()/p.length + i * (entorno.alto() / p.length), entorno);
 			}
 			jugador.estaMuerto=false;
 		}
@@ -118,7 +118,7 @@ public class Juego extends InterfaceJuego {
 		//EJECUCIÓN DE METODOS DEL JUGADOR
 		
 		jugador.mostrar(entorno);
-		jugador.movVertical();
+		jugador.movVertical(entorno, p);
 		
 		
 		//Detectar colisiones con el piso

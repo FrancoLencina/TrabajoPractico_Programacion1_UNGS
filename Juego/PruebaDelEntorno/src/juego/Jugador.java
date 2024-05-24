@@ -50,17 +50,17 @@ public class Jugador extends Entidad {
 		}
 	}
 
-	public void movVertical() {
+	public void movVertical(Entorno e, Piso[] p) {
 		//Caer
 		if (!estaApoyado) {
-			this.y += 3;
+			this.y += e.alto()/200;
 			estaCayendo=true;
 		}
 		if(estaSaltando) {
 			this.y -= 10;
 			contadorSalto++;
 		}
-		if(contadorSalto == 20) {
+		if(contadorSalto >= (e.alto()/p.length)/6) {
 			contadorSalto = 0;
 			estaSaltando = false;
 			estaCayendo= true;
