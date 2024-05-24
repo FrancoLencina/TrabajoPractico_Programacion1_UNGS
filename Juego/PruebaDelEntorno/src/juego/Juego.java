@@ -22,7 +22,7 @@ public class Juego extends InterfaceJuego {
 	
 	public Juego() {
 		//Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Juego", 800, 600);
+		this.entorno = new Entorno(this, "Juego", 900, 650);
 		background = Herramientas.cargarImagen("fondo.jpg");
 		
 		
@@ -43,13 +43,6 @@ public class Juego extends InterfaceJuego {
 				ene-=entorno.alto()/p.length;
 			}
 		}
-		
-		
-		
-		
-
-		
-		
 		
 		//Inicia el juego!
 		this.entorno.iniciar();
@@ -85,6 +78,7 @@ public class Juego extends InterfaceJuego {
 			jugador.moverse(false,entorno);
 		}
 		if(jugador.estaMuerto) {
+			bala=null;
 			jugador.x=jugador.xInicial;
 			jugador.y=jugador.yInicial;
 			double ene= entorno.alto()-entorno.alto()*0.3;
@@ -102,7 +96,7 @@ public class Juego extends InterfaceJuego {
 		}
 		
 		//Disparo del enemigo
-		for (int i = 0 ; i < enemigos.length ; i++) {
+		/*for (int i = 0 ; i < enemigos.length ; i++) {
 			if(bomba == null && enemigos[i].getPiso() == jugador.getPiso()) {
 				if (enemigos[i].dir && enemigos[i].x<jugador.x){
 					bomba = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
@@ -114,7 +108,7 @@ public class Juego extends InterfaceJuego {
 					System.out.println("pium pium! (izquierda)");
 				}
 			}
-		}
+		}*/
 		//EJECUCIÓN DE METODOS DEL JUGADOR
 		
 		jugador.mostrar(entorno);
@@ -188,8 +182,8 @@ public class Juego extends InterfaceJuego {
 			for (int i=0; i<enemigos.length;i++) {
 				if (enemigos[i] != null) {
 					if (detectarColisionBala(enemigos[i], bala)) {
-					/*bala=null;
-					enemigos[i]=null;*/}
+					bala=null;
+					enemigos[i]=null;}
 					}
 				}
 		}
@@ -307,10 +301,13 @@ public class Juego extends InterfaceJuego {
 	
 	
 	public boolean detectarColisionBala(Entidad en, Bala b) {
-		return (Math.abs(b.getDerecho() - en.getIzquierdo()) < 3.5 ||
-				Math.abs(b.getIzquierdo() - en.getDerecho()) < 3.5 &&
+		if (b!=null) {
+			return ((Math.abs(b.getDerecho() - en.getIzquierdo()) < 3.5 ||
+				Math.abs(b.getIzquierdo() - en.getDerecho()) < 3.5 )&&
 				(b.y > en.getTecho()) &&
 				(b.y < en.getPiso()));
+		}
+		return false;
 	}
 	public boolean detectarColisionBala(Enemigo[] en, Bala b) {
 		for (int i=0; i<en.length;i++) {
