@@ -24,10 +24,10 @@ public class Juego extends InterfaceJuego {
 	
 	public Juego() {
 		//Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Juego", 800, 600);
+		this.entorno = new Entorno(this, "Juego", 800, 800);
 		background = Herramientas.cargarImagen("fondo.jpg");
 		//Generación de pisos
-				p = new Piso[5];
+				p = new Piso[6];
 				for(int i = 0; i < p.length; i++) {
 					p[i] = new Piso(entorno.alto()/p.length + i * (entorno.alto() / p.length), entorno);
 				}
@@ -65,8 +65,8 @@ public class Juego extends InterfaceJuego {
         entorno.cambiarFont("Serif", 40, Color.WHITE);
         String texto = "Puntos: " + puntaje; 
         String texto2 = "Enemigos eliminados: " + muertos;
-        entorno.escribirTexto(texto, 0, entorno.alto()-(entorno.alto()/10));
-        entorno.escribirTexto(texto2, 0, entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length-entorno.alto()/p.length);
+        entorno.escribirTexto(texto, 0, entorno.alto()/20);
+        entorno.escribirTexto(texto2, 390, entorno.alto()/20);
 		
 		//Procesamiento de un instante de tiempo
 		for(int i = 0; i < p.length; i++) {
