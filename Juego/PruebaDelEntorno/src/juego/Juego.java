@@ -1,6 +1,6 @@
 package juego;
 
-//import java.awt.Color;
+import java.awt.Color;
 import java.awt.Image;
 //import java.awt.Rectangle;
 
@@ -18,6 +18,8 @@ public class Juego extends InterfaceJuego {
 	Bala[] bombas;
 	Enemigo[] enemigos;
 	Image background;
+	int puntaje = 0;
+	int muertos = 0;
 	
 	
 	public Juego() {
@@ -57,8 +59,14 @@ public class Juego extends InterfaceJuego {
 	}
 
 	public void tick() {
+		
 		//Cargar Fondo
 		entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0, entorno.alto()/600); //revisar el tema de la escala
+        entorno.cambiarFont("Serif", 40, Color.WHITE);
+        String texto = "Puntos: " + puntaje; 
+        String texto2 = "Enemigos eliminados: " + muertos;
+        entorno.escribirTexto(texto, 0, entorno.alto()-(entorno.alto()/10));
+        entorno.escribirTexto(texto2, 0, entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length-entorno.alto()/p.length);
 		
 		//Procesamiento de un instante de tiempo
 		for(int i = 0; i < p.length; i++) {
@@ -89,6 +97,8 @@ public class Juego extends InterfaceJuego {
 			jugador.moverse(false,entorno);
 		}
 		if(jugador.estaMuerto) {
+			puntaje=0;
+			muertos=0;
 			for(int i = 0; i < bombas.length; i++) {
 				bombas[i] = null;
 			}
@@ -132,10 +142,12 @@ public class Juego extends InterfaceJuego {
 				bombas[i] = null;
 					
 				}
-			
+		
+		//que desaparezca una bomba al tocar la bala	
 			if(bombas[i] != null && bala!=null) {
 				if(balaContraBomba(bala, bombas[i])) {
 					bombas[i]=null;
+					puntaje+=5;
 				}
 			}
 		}
@@ -240,6 +252,8 @@ public class Juego extends InterfaceJuego {
 					if (detectarColisionBala(enemigos[i], bala)) {
 						bala=null;
 						enemigos[i]=null;
+						muertos+=1;
+						puntaje +=20;
 					}
 				}
 			}
@@ -287,9 +301,11 @@ public class Juego extends InterfaceJuego {
 	}
 	
 	public boolean detectarColision(Entidad ju, Bloque bl) {
-		return Math.abs((ju.getTecho() - bl.getPiso())) < 3.5 && 
+		boolean verificar = Math.abs((ju.getTecho() - bl.getPiso())) < 3.5 && 
 				(ju.getIzquierdo() < (bl.getDerecho())) &&
-				(ju.getDerecho() > (bl.getIzquierdo()));		
+				(ju.getDerecho() > (bl.getIzquierdo()));
+		if (verificar && bl.rompible) {puntaje+= 2;} //ganar puntos por romper bloques
+		return 	verificar;	
 	}
 	
 	public boolean detectarColision(Entidad ju, Piso pi) {
