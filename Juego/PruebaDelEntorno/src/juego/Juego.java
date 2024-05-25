@@ -196,8 +196,20 @@ public class Juego extends InterfaceJuego {
 			jugador.contadorSalto = 0;
 		}
 		
-		if (detectarCostado (jugador,p)) {
-			System.out.println("toque el costado del bloque");
+		if (chocoDer(jugador, p) && (jugador.estaSaltando||jugador.estaCayendo) && entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
+			jugador.x+=2;
+			jugador.estaSaltando=false;
+			jugador.estaCayendo=true;
+			jugador.estaApoyado=false;
+			System.out.println("toque el costado derecho");
+		}
+		
+		if (chocoIzq(jugador, p)  && (jugador.estaSaltando||jugador.estaCayendo) && entorno.estaPresionada(entorno.TECLA_DERECHA)) {
+			jugador.x-=2;
+			jugador.estaSaltando=false;
+			jugador.estaCayendo=true;
+			jugador.estaApoyado=false;
+			System.out.println("toque el costado izquierdo");
 		}
 		
 		//Detectar colisiones con el enemigo
@@ -350,11 +362,37 @@ public class Juego extends InterfaceJuego {
 	
 	public boolean detectarCostado(Entidad ju, Piso[] pisos) {
 		for(int i = 0; i < pisos.length; i++) {
-			if(detectarCostado(ju, pisos[i])) {
+			if(detectarCostado(ju, pisos[i]) && !ju.estaApoyado) {
 				return true;
 			}
 		}
 		
+		return false;
+	}
+	
+	public boolean chocoDer(Entidad ju, Piso[] pi) {
+		for (int i=0; i<p.length; i++) {
+			for (int j=0; j<pi[i].bloques.length; j++) {
+				if (pi[i].bloques[j]!=null) {
+					if (detectarCostado(ju, pi) && pi[i].bloques[j].getDerecho() < ju.getDerecho()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean chocoIzq(Entidad ju, Piso[] pi) {
+		for (int i=0; i<p.length; i++) {
+			for (int j=0; j<pi[i].bloques.length; j++) {
+				if (pi[i].bloques[j]!=null) {
+					if (detectarCostado(ju, pi) && pi[i].bloques[j].getIzquierdo() > ju.getIzquierdo()) {
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 	
