@@ -178,7 +178,7 @@ public class Juego extends InterfaceJuego {
 		
 	
 		//EJECUCIÓN DE METODOS DEL JUGADOR
-		
+	
 		jugador.mostrar(entorno);
 		jugador.movVertical(entorno, p);
 		
