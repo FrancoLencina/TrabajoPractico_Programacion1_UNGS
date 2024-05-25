@@ -24,7 +24,7 @@ public class Juego extends InterfaceJuego {
 	
 	public Juego() {
 		//Inicializa el objeto entorno
-		this.entorno = new Entorno(this, "Juego", 800, 800);
+		this.entorno = new Entorno(this, "Juego", 1000,800);
 		background = Herramientas.cargarImagen("fondo.jpg");
 		//Generación de pisos
 				p = new Piso[6];
@@ -60,13 +60,16 @@ public class Juego extends InterfaceJuego {
 
 	public void tick() {
 		
+		
+		
+		
 		//Cargar Fondo
-		entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0, entorno.alto()/600); //revisar el tema de la escala
+		entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1); //revisar el tema de la escala
         entorno.cambiarFont("Serif", 40, Color.WHITE);
         String texto = "Puntos: " + puntaje; 
         String texto2 = "Enemigos eliminados: " + muertos;
-        entorno.escribirTexto(texto, 0, entorno.alto()/20);
-        entorno.escribirTexto(texto2, 390, entorno.alto()/20);
+        entorno.escribirTexto(texto, 10, entorno.alto()/20);
+        entorno.escribirTexto(texto2, entorno.ancho()-410, entorno.alto()/20); //410 es aprox el tamaño del texto2
 		
 		//Procesamiento de un instante de tiempo
 		for(int i = 0; i < p.length; i++) {
@@ -96,7 +99,7 @@ public class Juego extends InterfaceJuego {
 		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)&& jugador.estaCayendo) {
 			jugador.moverse(false,entorno);
 		}
-		if(jugador.estaMuerto) {
+		if(jugador.estaMuerto || entorno.estaPresionada(entorno.TECLA_CTRL)) {
 			puntaje=0;
 			muertos=0;
 			for(int i = 0; i < bombas.length; i++) {
@@ -151,6 +154,7 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 		}
+		
 		//Disparo del enemigo
 		
 					
@@ -277,6 +281,14 @@ public class Juego extends InterfaceJuego {
 			bala = null;
 			
 		}
+		
+		
+		//Ganar el juego
+		if((jugador.x < entorno.ancho()/2 + 15 || jugador.x > entorno.ancho()/2 - 15) && jugador.y <= 120){
+			
+			entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1); //revisar el tema de la escala
+
+		}
 	}
 	
 	@SuppressWarnings("unused")
@@ -285,6 +297,8 @@ public class Juego extends InterfaceJuego {
 	}
 	
 	
+	
+	//Metodos de colision las entodades con el bloque
 	public boolean detectarApoyo(Entidad ju, Bloque bl) {
 		return Math.abs((ju.getPiso() - bl.getTecho())) < 2 && 
 				(ju.getIzquierdo() < (bl.getDerecho())) &&
@@ -343,6 +357,8 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
+	
+	//Metodo de colision de los costados del jugador con el bloque, para que no los transpase al saltar en diagonal
 	public boolean detectarCostado(Entidad ju, Bloque bl) {
 		return (Math.abs(ju.getDerecho() - bl.getIzquierdo()) < 1.5 ||
 				Math.abs(ju.getIzquierdo() - bl.getDerecho()) < 1.5) &&
@@ -396,13 +412,16 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
+	
+	
+	//Metodo de detectar la colison del jugador con el enemigo
 	public boolean detectarColisionEnemigo(Entidad ju, Entidad en) {
 		return Math.abs((ju.getPiso() - en.getPiso())) < 3.5 && 
 				(ju.getIzquierdo() < (en.getDerecho())) &&
 				(ju.getDerecho() > (en.getIzquierdo()));		
 	}
 	
-	
+	//Metodo de detectar la colison del jugador con la bala
 	public boolean detectarColisionBala(Entidad en, Bala b) {
 		if (b!=null) {
 			return ((Math.abs(b.getDerecho() - en.getIzquierdo()) < 3.5 ||
@@ -421,6 +440,8 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
+	
+	//Metodo de detectar la colison de la bala y la bomba
 	public boolean balaContraBomba (Bala bom, Bala bal) {
 		if (bal!=null) {
 			return ((Math.abs(bal.getDerecho() - bom.getIzquierdo()) < 3.5 ||
@@ -430,4 +451,6 @@ public class Juego extends InterfaceJuego {
 		}
 		return false;
 	}
+	
+	
 }

@@ -26,10 +26,10 @@ public class Enemigo extends Entidad{
 		if (estaApoyado) {
 			
 			if (dir) {
-				this.x += 3;
+				this.x += 2;
 			}
 			if(!dir) {
-				this.x -= 3;
+				this.x -= 2;
 			}
 			if(getDerecho() > entorno.ancho()- 10) {
 				dir = false;

@@ -60,7 +60,7 @@ public class Jugador extends Entidad {
 			this.y -= 10;
 			contadorSalto++;
 		}
-		if(contadorSalto >= (e.alto()/p.length)/6) {
+		if(contadorSalto >= (e.alto()/p.length)/4) {
 			contadorSalto = 0;
 			estaSaltando = false;
 			estaCayendo= true;

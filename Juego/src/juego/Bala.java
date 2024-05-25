@@ -15,10 +15,10 @@ public class Bala {
 	public Bala(double x, double y, boolean direccion) {
 		this.x = x;
 		this.y = y;
-		spriteIzq = Herramientas.cargarImagen("balaIzq.png");
-		spriteDer = Herramientas.cargarImagen("bala.png");
+		spriteIzq = Herramientas.cargarImagen("frutillaIzq.png");
+		spriteDer = Herramientas.cargarImagen("frutillaDer.png");
 		dir = direccion;
-		escala = 0.1;
+		escala = 0.07;
 		alto = spriteIzq.getHeight(null) * escala;
 		ancho = spriteIzq.getWidth(null) * escala;
 		this.velocidad = 4;
