@@ -18,14 +18,18 @@ public class Juego extends InterfaceJuego {
 	Bala[] bombas;
 	Enemigo[] enemigos;
 	Image background;
+	Image gato;
 	int puntaje = 0;
 	int muertos = 0;
+	
 	
 	
 	public Juego() {
 		//Inicializa el objeto entorno
 		this.entorno = new Entorno(this, "Juego", 1000,800);
 		background = Herramientas.cargarImagen("fondo.jpg");
+		gato = Herramientas.cargarImagen("StrawberryCat.png");
+		
 		//Generación de pisos
 				p = new Piso[6];
 				for(int i = 0; i < p.length; i++) {
@@ -70,6 +74,9 @@ public class Juego extends InterfaceJuego {
         String texto2 = "Enemigos eliminados: " + muertos;
         entorno.escribirTexto(texto, 10, entorno.alto()/20);
         entorno.escribirTexto(texto2, entorno.ancho()-410, entorno.alto()/20); //410 es aprox el tamaño del texto2
+        //Dibujar la meta
+		entorno.dibujarImagen(gato, entorno.ancho()/2,90,0,0.1);
+
 		
 		//Procesamiento de un instante de tiempo
 		for(int i = 0; i < p.length; i++) {
@@ -150,6 +157,7 @@ public class Juego extends InterfaceJuego {
 			if(bombas[i] != null && bala!=null) {
 				if(balaContraBomba(bala, bombas[i])) {
 					bombas[i]=null;
+					bala = null;
 					puntaje+=1;
 				}
 			}
@@ -284,7 +292,7 @@ public class Juego extends InterfaceJuego {
 		
 		
 		//Ganar el juego
-		if((jugador.x < entorno.ancho()/2 + 15 || jugador.x > entorno.ancho()/2 - 15) && jugador.y <= 120){
+		if((jugador.x <= entorno.ancho()/2 + 15 || jugador.x > entorno.ancho()/2 - 15) && jugador.y <= 90){
 			
 			entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1); //revisar el tema de la escala
 
