@@ -147,7 +147,7 @@ public class Juego extends InterfaceJuego {
 			if(bombas[i] != null && bala!=null) {
 				if(balaContraBomba(bala, bombas[i])) {
 					bombas[i]=null;
-					puntaje+=5;
+					puntaje+=1;
 				}
 			}
 		}
@@ -265,7 +265,7 @@ public class Juego extends InterfaceJuego {
 						bala=null;
 						enemigos[i]=null;
 						muertos+=1;
-						puntaje +=20;
+						puntaje +=2;
 					}
 				}
 			}
