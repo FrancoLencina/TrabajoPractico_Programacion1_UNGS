@@ -191,6 +191,13 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 		
+		//Eliminar la bomba perteneciente a un enemigo específico cuando este muere
+		for (int i = 0; i < bombas.length; i++) {
+			if (enemigos[i]==null) {
+				bombas[i] = null;
+			}
+		}
+		
 	
 		//EJECUCIÓN DE METODOS DEL JUGADOR
 	
