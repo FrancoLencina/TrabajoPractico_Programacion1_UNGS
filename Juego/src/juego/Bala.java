@@ -18,7 +18,7 @@ public class Bala {
 		spriteIzq = Herramientas.cargarImagen("frutillaIzq.png");
 		spriteDer = Herramientas.cargarImagen("frutillaDer.png");
 		dir = direccion;
-		escala = 0.07;
+		escala = 0.04;
 		alto = spriteIzq.getHeight(null) * escala;
 		ancho = spriteIzq.getWidth(null) * escala;
 		this.velocidad = 4;

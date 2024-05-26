@@ -27,7 +27,7 @@ public class Entidad {
 			spriteDer = Herramientas.cargarImagen("missigno.png");
 			dir = true;
 			estaApoyado = false;
-			escala = 0.2;
+			escala = 0.095;
 			alto = spriteIzq.getHeight(null) * escala;
 			ancho = spriteIzq.getWidth(null) * escala;
 			estaCayendo = false;

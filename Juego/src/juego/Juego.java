@@ -32,7 +32,7 @@ public class Juego extends InterfaceJuego {
 		gato = Herramientas.cargarImagen("StrawberryCat.png");
 		
 		//Generación de pisos
-				p = new Piso[6];
+				p = new Piso[5];
 				for(int i = 0; i < p.length; i++) {
 					p[i] = new Piso(entorno.alto()/p.length + i * (entorno.alto() / p.length), entorno);
 				}
