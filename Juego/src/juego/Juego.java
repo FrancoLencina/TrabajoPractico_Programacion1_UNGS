@@ -12,9 +12,10 @@ public class Juego extends InterfaceJuego {
 
 	// El objeto Entorno que controla el tiempo y otros
 	private Entorno entorno;
-	Jugador jugador;
+	Jugador[] jugadores;
 	Piso[] p;
-	Bala bala;
+	Bala balaj1;
+	Bala balaj2;
 	Bala[] bombas;
 	Enemigo[] enemigos;
 	Image background;
@@ -38,7 +39,9 @@ public class Juego extends InterfaceJuego {
 				}
 				
 		//Inicialización de las Entidades
-		jugador = new Jugador(entorno.ancho()/2, entorno.alto()-(entorno.alto()/10));
+		jugadores = new Jugador[2];
+		jugadores[0] = new Jugador(entorno.ancho()/2, entorno.alto()-(entorno.alto()/10));
+		jugadores[1] = new Jugador(entorno.ancho()/2+50, entorno.alto()-(entorno.alto()/10));
 		enemigos = new Enemigo[(p.length-1)*2];
 		double yInicial= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
 		double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
@@ -66,9 +69,6 @@ public class Juego extends InterfaceJuego {
 
 	public void tick() {
 		
-		
-		
-		
 		//Cargar Fondo
 		entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1); //revisar el tema de la escala
         entorno.cambiarFont("Serif", 40, Color.WHITE);
@@ -84,40 +84,79 @@ public class Juego extends InterfaceJuego {
 		for(int i = 0; i < p.length; i++) {
 			p[i].mostrar(entorno);
 		}
+		
+		//controles jugador 1
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA)) {
-			jugador.moverse(true,entorno);
+			jugadores[0].moverse(true,entorno);
 		}
 		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
-			jugador.moverse(false,entorno);
+			jugadores[0].moverse(false,entorno);
 		}
-		if(bala == null && entorno.estaPresionada(entorno.TECLA_ESPACIO)) {
-			bala = new Bala(jugador.x, jugador.y, jugador.dir);
+		if(balaj1 == null && entorno.estaPresionada(entorno.TECLA_ESPACIO)) {
+			balaj1 = new Bala(jugadores[0].x, jugadores[0].y, jugadores[0].dir);
 		}
-		if(entorno.estaPresionada(entorno.TECLA_ARRIBA) && jugador.estaApoyado) {
-			jugador.estaSaltando = true;
+		if(entorno.estaPresionada(entorno.TECLA_ARRIBA) && jugadores[0].estaApoyado) {
+			jugadores[0].estaSaltando = true;
 		}
-		if(entorno.estaPresionada(entorno.TECLA_DERECHA) && jugador.estaSaltando) {
-			jugador.moverse(true,entorno);
+		if(entorno.estaPresionada(entorno.TECLA_DERECHA) && jugadores[0].estaSaltando) {
+			jugadores[0].moverse(true,entorno);
 		}
-		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && jugador.estaSaltando) {
-			jugador.moverse(false,entorno);
+		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA) && jugadores[0].estaSaltando) {
+			jugadores[0].moverse(false,entorno);
 		}
-		if(entorno.estaPresionada(entorno.TECLA_DERECHA)&& jugador.estaCayendo) {
-			jugador.moverse(true,entorno);
+		if(entorno.estaPresionada(entorno.TECLA_DERECHA)&& jugadores[0].estaCayendo) {
+			jugadores[0].moverse(true,entorno);
 		}
-		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)&& jugador.estaCayendo) {
-			jugador.moverse(false,entorno);
+		if(entorno.estaPresionada(entorno.TECLA_IZQUIERDA)&& jugadores[0].estaCayendo) {
+			jugadores[0].moverse(false,entorno);
 		}
-		if(jugador.estaMuerto || entorno.estaPresionada(entorno.TECLA_CTRL)) {
+		
+		//controles jugador 2
+			if(entorno.estaPresionada('D')) {
+				jugadores[1].moverse(true,entorno);
+			}
+			if(entorno.estaPresionada('A')) {
+				jugadores[1].moverse(false,entorno);
+			}
+			if(balaj2 == null && entorno.estaPresionada(entorno.TECLA_ENTER)) {
+				balaj2 = new Bala(jugadores[1].x, jugadores[1].y, jugadores[1].dir);
+			}
+			if(entorno.estaPresionada('W') && jugadores[1].estaApoyado) {
+				jugadores[1].estaSaltando = true;
+			}
+			if(entorno.estaPresionada('D') && jugadores[1].estaSaltando) {
+				jugadores[1].moverse(true,entorno);
+			}
+			if(entorno.estaPresionada('A') && jugadores[1].estaSaltando) {
+				jugadores[1].moverse(false,entorno);
+			}
+			if(entorno.estaPresionada('D')&& jugadores[1].estaCayendo) {
+				jugadores[1].moverse(true,entorno);
+			}
+			if(entorno.estaPresionada('A')&& jugadores[1].estaCayendo) {
+				jugadores[1].moverse(false,entorno);
+			}
+			int c=0;
+		for (int j = 0; j<jugadores.length;j++) {
+			if (jugadores[j]!=null) {
+			if (jugadores[j].estaMuerto) {c+=1;}}
+		}
+		
+		if( c==jugadores.length|| entorno.estaPresionada(entorno.TECLA_CTRL)) {
+			jugadores[0]=null;
+			jugadores[1]=null;
+			jugadores[0] = new Jugador(entorno.ancho()/2, entorno.alto()-(entorno.alto()/10));
+			jugadores[1] = new Jugador(entorno.ancho()/2+50, entorno.alto()-(entorno.alto()/10));
 			puntaje=0;
 			muertos=0;
 			contadorEnemigos=0;
 			for(int i = 0; i < bombas.length; i++) {
 				bombas[i] = null;
 			}
-			bala=null;
-			jugador.x=jugador.xInicial;
-			jugador.y=jugador.yInicial;
+			balaj1=null;
+			balaj2=null;
+			//jugadores[0].x=jugadores[0].xInicial;
+			//jugadores[0].y=jugadores[0].yInicial;
 			double yInicial= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
 			double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
 			for (int i=0; i<enemigos.length;i++) {
@@ -138,7 +177,8 @@ public class Juego extends InterfaceJuego {
 				p[i] = null;
 				p[i] = new Piso(entorno.alto()/p.length + i * (entorno.alto() / p.length), entorno);
 			}
-			jugador.estaMuerto=false;
+			jugadores[0].estaMuerto=false;
+			jugadores[1].estaMuerto=false;
 		}
 		
 		//COMPORTAMIENTO DE LA BOMBA
@@ -158,8 +198,15 @@ public class Juego extends InterfaceJuego {
 				}
 		
 		//que desaparezca una bomba al tocar la bala	
-			if(bombas[i] != null && bala!=null) {
-				if(balaContraBomba(bala, bombas[i])) {
+			if(bombas[i] != null && balaj1!=null) {
+				if(balaContraBomba(balaj1, bombas[i])) {
+					bombas[i]=null;
+					puntaje+=1;
+				}
+			}
+			
+			if(bombas[i] != null && balaj2!=null) {
+				if(balaContraBomba(balaj2, bombas[i])) {
 					bombas[i]=null;
 					puntaje+=1;
 				}
@@ -170,14 +217,16 @@ public class Juego extends InterfaceJuego {
 		
 					
 		for (int i = 0 ; i < enemigos.length ; i++) {
-			if (enemigos[i] != null) {
-				if( bombas[i] == null && Math.abs(enemigos[i].y-jugador.y) < 5) {
-					if (enemigos[i].dir && enemigos[i].x<jugador.x){
-						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
-					} 
+			for (int j = 0 ; j < jugadores.length ; j++) {
+				if (enemigos[i] != null && jugadores[j]!=null) {
+					if( bombas[i] == null && Math.abs(enemigos[i].y-jugadores[j].y) < 5) {
+						if (enemigos[i].dir && enemigos[i].x<jugadores[j].x){
+							bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
+						} 
 				
-					if (!enemigos[i].dir && enemigos[i].x>jugador.x){
+						if (!enemigos[i].dir && enemigos[i].x>jugadores[0].x){
 						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
+						}
 					}
 				}
 			}
@@ -186,12 +235,14 @@ public class Juego extends InterfaceJuego {
 		//Morir al tocar una bomba
 		
 		for (int i = 0; i < bombas.length; i++) {
-			if (detectarColisionBala(jugador, bombas[i])) {
-				jugador.estaMuerto = true;
+			for (int j = 0; j<jugadores.length ; j++) {
+				if (detectarColisionBala(jugadores[j], bombas[i])) {
+					jugadores[j].estaMuerto = true;
+				}
 			}
 		}
 		
-		//Eliminar la bomba perteneciente a un enemigo específico cuando este muere
+		//Eliminar la bomba perteneciente a un enemigo específico cuando éste muere
 		for (int i = 0; i < bombas.length; i++) {
 			if (enemigos[i]==null) {
 				bombas[i] = null;
@@ -199,47 +250,56 @@ public class Juego extends InterfaceJuego {
 		}
 		
 	
-		//EJECUCIÓN DE METODOS DEL JUGADOR
-	
-		jugador.mostrar(entorno);
-		jugador.movVertical(entorno, p);
+		//EJECUCIÓN DE METODOS DE LOS JUGADORES
+		for (int i=0; i<jugadores.length; i++) {
+			jugadores[i].mostrar(entorno);
+			jugadores[i].movVertical(entorno, p);
+			
+			if (jugadores[i]!=null) {
+				if (jugadores[i].estaMuerto) { 
+					jugadores[i].x=entorno.ancho()+100;
+					}
+			}
 		
 		
 		//Detectar colisiones con el piso
-		if(detectarApoyo(jugador, p)) {
-			jugador.estaApoyado = true;
-		}
-		else {
-			jugador.estaApoyado = false;
-		}
+			if(detectarApoyo(jugadores[i], p)) {
+				jugadores[i].estaApoyado = true;
+			}
 		
-		if(detectarColision (jugador, p)) {
-			jugador.estaSaltando = false;
-			jugador.contadorSalto = 0;
-		}
+			else {
+			jugadores[i].estaApoyado = false;
+			}
 		
-		if (chocoDer(jugador, p) && (jugador.estaSaltando||jugador.estaCayendo) && entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
-			jugador.x+=2;
-			jugador.estaSaltando=false;
-			jugador.estaCayendo=true;
-			jugador.estaApoyado=false;
-		}
+			if(detectarColision (jugadores[i], p)) {
+			jugadores[i].estaSaltando = false;
+			jugadores[i].contadorSalto = 0;
+			}
 		
-		if (chocoIzq(jugador, p)  && (jugador.estaSaltando||jugador.estaCayendo) && entorno.estaPresionada(entorno.TECLA_DERECHA)) {
-			jugador.x-=2;
-			jugador.estaSaltando=false;
-			jugador.estaCayendo=true;
-			jugador.estaApoyado=false;
-		}
+			if (chocoDer(jugadores[i], p) && (jugadores[i].estaSaltando||jugadores[i].estaCayendo) && entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
+			jugadores[i].x+=2;
+			jugadores[i].estaSaltando=false;
+			jugadores[i].estaCayendo=true;
+			jugadores[i].estaApoyado=false;
+			}
+		
+			if (chocoIzq(jugadores[i], p)  && (jugadores[0].estaSaltando||jugadores[0].estaCayendo) && entorno.estaPresionada(entorno.TECLA_DERECHA)) {
+			jugadores[i].x-=2;
+			jugadores[i].estaSaltando=false;
+			jugadores[i].estaCayendo=true;
+			jugadores[i].estaApoyado=false;
+			}
 		
 		//Detectar colisiones con el enemigo
-		for (int i=0; i<enemigos.length;i++) {
-			if (enemigos[i]!=null) {
-				if(detectarColisionEnemigo(jugador, enemigos[i])) {
-					jugador.estaMuerto = true;
+			for (int j=0; j<enemigos.length;j++) {
+				if (enemigos[j]!=null) {
+					if(detectarColisionEnemigo(jugadores[i], enemigos[j])) {
+					jugadores[i].estaMuerto = true;
 					}
 				}
+			}
 		}
+		
 		
 		
 		//EJECUCIÓN DE METODOS DEL ENEMIGO
@@ -281,16 +341,35 @@ public class Juego extends InterfaceJuego {
 		
 		
 		//COMPORTAMIENTO DE LA BALA
-		if(bala != null) {
-			bala.mostrar(entorno);
-			bala.moverse();
+		if(balaj1 != null) {
+			balaj1.mostrar(entorno);
+			balaj1.moverse();
 			
 			
 			//Detectar disparo
 			for (int i=0; i<enemigos.length;i++) {
 				if (enemigos[i] != null) {
-					if (detectarColisionBala(enemigos[i], bala)) {
-						bala=null;
+					if (detectarColisionBala(enemigos[i], balaj1)) {
+						balaj1=null;
+						enemigos[i]=null;
+						contadorEnemigos-=1;
+						muertos+=1;
+						puntaje +=2;
+					}
+				}
+			}
+		}
+		
+		if(balaj2 != null) {
+			balaj2.mostrar(entorno);
+			balaj2.moverse();
+			
+			
+			//Detectar disparo
+			for (int i=0; i<enemigos.length;i++) {
+				if (enemigos[i] != null) {
+					if (detectarColisionBala(enemigos[i], balaj2)) {
+						balaj2=null;
 						enemigos[i]=null;
 						contadorEnemigos-=1;
 						muertos+=1;
@@ -301,15 +380,19 @@ public class Juego extends InterfaceJuego {
 		}
 		
 		//Hacer que la bala desaparezca al tocar el borde de la pantalla
-		if( bala != null && (bala.x < -0.1 * entorno.ancho() 
-		|| bala.x > entorno.ancho() * 1.1)) {
-			bala = null;
-			
+		if( balaj1 != null && (balaj1.x < -0.1 * entorno.ancho() 
+		|| balaj1.x > entorno.ancho() * 1.1)) {
+			balaj1 = null;	
+		}
+		
+		if( balaj2 != null && (balaj2.x < -0.1 * entorno.ancho() 
+				|| balaj2.x > entorno.ancho() * 1.1)) {
+					balaj2 = null;	
 		}
 		
 		
 		//Ganar el juego
-		if((jugador.x <= entorno.ancho()/2 + 15 || jugador.x > entorno.ancho()/2 - 15) && jugador.y <= 90){
+		if((jugadores[0].x <= entorno.ancho()/2 + 15 || jugadores[0].x > entorno.ancho()/2 - 15) && jugadores[0].y <= 90){
 			
 			entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1); //revisar el tema de la escala
 
@@ -359,10 +442,10 @@ public class Juego extends InterfaceJuego {
 		return 	verificar;	
 	}
 	
-	public boolean detectarColision(Entidad ju, Piso pi) {
+	public boolean detectarColision(Jugador ju, Piso pi) {
 		for(int i = 0; i < pi.bloques.length; i++) {
 			if(pi.bloques[i] != null && detectarColision(ju, pi.bloques[i])) {
-				if(pi.bloques[i].rompible) {
+				if(pi.bloques[i].rompible && !ju.estaMuerto) {
 					pi.bloques[i] = null;
 				}
 				return true;
@@ -372,7 +455,7 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	public boolean detectarColision(Entidad ju, Piso[] pisos) {
+	public boolean detectarColision(Jugador ju, Piso[] pisos) {
 		for(int i = 0; i < pisos.length; i++) {
 			if(detectarColision(ju, pisos[i])) {
 				return true;
