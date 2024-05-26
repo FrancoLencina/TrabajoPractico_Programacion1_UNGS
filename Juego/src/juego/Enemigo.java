@@ -7,7 +7,7 @@ public class Enemigo extends Entidad{
 	public Enemigo(double x, double y) {
 		this.x = x;
 		this.y = y;
-		this.escala = 0.08;
+		this.escala = 0.09;
 		spriteIzq = Herramientas.cargarImagen("AngryDogLeft.png");
 		spriteDer = Herramientas.cargarImagen("AngryDogRight.png");
 		this.estaApoyado = true;

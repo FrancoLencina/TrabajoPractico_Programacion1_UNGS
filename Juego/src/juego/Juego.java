@@ -171,7 +171,7 @@ public class Juego extends InterfaceJuego {
 					
 		for (int i = 0 ; i < enemigos.length ; i++) {
 			if (enemigos[i] != null) {
-				if( bombas[i] == null && Math.abs(enemigos[i].y-jugador.y) < 3) {
+				if( bombas[i] == null && Math.abs(enemigos[i].y-jugador.y) < 5) {
 					if (enemigos[i].dir && enemigos[i].x<jugador.x){
 						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
 					} 
