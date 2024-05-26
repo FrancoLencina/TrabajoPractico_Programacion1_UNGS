@@ -21,6 +21,7 @@ public class Juego extends InterfaceJuego {
 	Image gato;
 	int puntaje = 0;
 	int muertos = 0;
+	int contadorEnemigos =0;
 	
 	
 	
@@ -43,6 +44,7 @@ public class Juego extends InterfaceJuego {
 		double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
 		for (int i=0; i<enemigos.length;i++) {
 			enemigos[i] = new Enemigo((int) (xInicial), yInicial);
+			contadorEnemigos += 1;
 			if (i%2==0) {
 				xInicial += entorno.ancho()/3;
 				if (xInicial > entorno.ancho()) {
@@ -109,6 +111,7 @@ public class Juego extends InterfaceJuego {
 		if(jugador.estaMuerto || entorno.estaPresionada(entorno.TECLA_CTRL)) {
 			puntaje=0;
 			muertos=0;
+			contadorEnemigos=0;
 			for(int i = 0; i < bombas.length; i++) {
 				bombas[i] = null;
 			}
@@ -119,6 +122,7 @@ public class Juego extends InterfaceJuego {
 			double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
 			for (int i=0; i<enemigos.length;i++) {
 				enemigos[i] = new Enemigo((int) (xInicial), yInicial);
+				contadorEnemigos += 1;
 				if (i%2==0) {
 					xInicial += entorno.ancho()/3;
 					if (xInicial > entorno.ancho()) {
@@ -157,7 +161,6 @@ public class Juego extends InterfaceJuego {
 			if(bombas[i] != null && bala!=null) {
 				if(balaContraBomba(bala, bombas[i])) {
 					bombas[i]=null;
-					bala = null;
 					puntaje+=1;
 				}
 			}
@@ -213,7 +216,6 @@ public class Juego extends InterfaceJuego {
 			jugador.estaSaltando=false;
 			jugador.estaCayendo=true;
 			jugador.estaApoyado=false;
-			System.out.println("toque el costado derecho");
 		}
 		
 		if (chocoIzq(jugador, p)  && (jugador.estaSaltando||jugador.estaCayendo) && entorno.estaPresionada(entorno.TECLA_DERECHA)) {
@@ -221,14 +223,12 @@ public class Juego extends InterfaceJuego {
 			jugador.estaSaltando=false;
 			jugador.estaCayendo=true;
 			jugador.estaApoyado=false;
-			System.out.println("toque el costado izquierdo");
 		}
 		
 		//Detectar colisiones con el enemigo
 		for (int i=0; i<enemigos.length;i++) {
 			if (enemigos[i]!=null) {
 				if(detectarColisionEnemigo(jugador, enemigos[i])) {
-					System.out.println("se golpearon");
 					jugador.estaMuerto = true;
 					}
 				}
@@ -259,6 +259,15 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 		
+		//Al quedar solo un enemigo se genera uno nuevo
+		
+		for (int i=0; i<enemigos.length; i++) {
+			if (contadorEnemigos<2 && enemigos[i]== null) {
+				enemigos[i] = new Enemigo(Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04, -30);
+				contadorEnemigos+=1;
+			}
+		}
+		
 	
 		
 		
@@ -276,6 +285,7 @@ public class Juego extends InterfaceJuego {
 					if (detectarColisionBala(enemigos[i], bala)) {
 						bala=null;
 						enemigos[i]=null;
+						contadorEnemigos-=1;
 						muertos+=1;
 						puntaje +=2;
 					}
