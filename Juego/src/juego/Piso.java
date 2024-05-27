@@ -1,8 +1,6 @@
 package juego;
-
-import java.awt.Color;
-
 import entorno.Entorno;
+import entorno.Herramientas;
 
 public class Piso {
 	Bloque[] bloques;
@@ -17,8 +15,13 @@ public class Piso {
 		
 		for(int i = 0; i < bloques.length; i++) {
 			bloques[i] = new Bloque((i+0.5)* testigo.ancho, y);
-			
-
+		}
+		
+		if((bloques[10].rompible || bloques[11].rompible)  && y == e.alto()/5 ) {
+			bloques[10].rompible = false;
+			bloques[11].rompible = false;
+			bloques[10].sprite = Herramientas.cargarImagen("roca2.png");
+			bloques[11].sprite = Herramientas.cargarImagen("roca2.png");
 		}
 		
 	}

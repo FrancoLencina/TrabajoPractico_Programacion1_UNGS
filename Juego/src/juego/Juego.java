@@ -12,29 +12,38 @@ public class Juego extends InterfaceJuego {
 
 	// El objeto Entorno que controla el tiempo y otros
 	private Entorno entorno;
+	//Entidades
 	Jugador[] jugadores;
-	Piso[] p;
+	Enemigo[] enemigos;
+	//Municiones
 	Bala[] balas;
 	Bala[] bombas;
-	Enemigo[] enemigos;
+	//Pisos
+	Piso[] p;
+	Piso lava;
+	//Imagenes
+	Image titulo;
 	Image background;
-	Bloque gato;
-	Image michi;
+	Image pinkLava;
+	Image gato;
+	//Variables Globales
 	int puntaje = 0;
 	int muertos = 0;
-	int contadorEnemigos =0;
+	int contadorEnemigos = 0;
+	double lavaVel = 0;
+	double posInicial;
+	String insertarJugador = "INSERT para Jugador 2";
 	
 	
 	
 	public Juego() {
 		//Inicializa el objeto entorno
 		this.entorno = new Entorno(this, "Juego", 800,600);
+		
+		titulo = Herramientas.cargarImagen("titulo.png");
 		background = Herramientas.cargarImagen("fondo.jpg");
-		
-		gato = new Bloque(entorno.ancho()/2,78);
-		
-		michi = Herramientas.cargarImagen("StrawberryCat.png");
-		
+		gato = Herramientas.cargarImagen("StrawberryCat.png");
+		pinkLava = Herramientas.cargarImagen("pink lava.png");
 		//Generación de pisos
 				p = new Piso[5];
 				for(int i = 0; i < p.length; i++) {
@@ -42,11 +51,13 @@ public class Juego extends InterfaceJuego {
 				}
 				
 				
+				
+				
 		//Inicialización de las Entidades
-		jugadores = new Jugador[1];
-		for (int j=0; j<jugadores.length;j++) {
-			jugadores[j] = new Jugador(entorno.ancho()/2, entorno.alto()-(entorno.alto()/10));
-		}
+		jugadores = new Jugador[2]; //El array ya tiene espacio para dos jugadores
+		posInicial = entorno.ancho()/2;
+		jugadores[0] = new Jugador(posInicial-50, entorno.alto()-(entorno.alto()/10));
+		posInicial += 100;
 		enemigos = new Enemigo[1];//(p.length-1)*2
 		double yInicial= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
 		double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
@@ -76,22 +87,35 @@ public class Juego extends InterfaceJuego {
 	public void tick() {
 		
 		//Cargar Fondo
+		
 		entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1); //revisar el tema de la escala
+		
+		if(jugadores[1] == null) {
+	       	entorno.cambiarFont("Serif", 20, Color.WHITE);
+	       	entorno.escribirTexto(insertarJugador, 10 , entorno.alto()- 60);
+       }
+		
         entorno.cambiarFont("Serif", 40, Color.WHITE);
         String texto = "Puntos: " + puntaje; 
         String texto2 = "Enemigos eliminados: " + muertos;
         entorno.escribirTexto(texto, 10, entorno.alto()/20);
         entorno.escribirTexto(texto2, entorno.ancho()-410, entorno.alto()/20); //410 es aprox el tamaño del texto2
-        //Dibujar la meta
-		entorno.dibujarImagen(michi, entorno.ancho()/2,78,0,0.1);
-        //gato.mostrar(entorno);
-
+        
+        //Dibujar al gato (meta)
+		entorno.dibujarImagen(gato, entorno.ancho()/2,78,0,0.1);
+	 
 		
 		//Procesamiento de un instante de tiempo
 		for(int i = 0; i < p.length; i++) {
 			p[i].mostrar(entorno);
 		}
 		
+		
+		if(entorno.estaPresionada(entorno.TECLA_INSERT) && jugadores[1] == null) {
+			jugadores[1] = new Jugador(posInicial, entorno.alto()-(entorno.alto()/10));
+			jugadores[1].estaMuerto = false; //It´s alive!
+		}
+
 		//controles jugador 1
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA)) {
 			jugadores[0].moverse(true,entorno);
@@ -145,18 +169,25 @@ public class Juego extends InterfaceJuego {
 				jugadores[1].moverse(false,entorno);
 			}
 		}
-			int c=0;
+		
+		
+		//REINICIO DEL JUEGO
+		int c=0;
 		for (int j = 0; j<jugadores.length;j++) {
 			if (jugadores[j]!=null) {
-			if (jugadores[j].estaMuerto) {c+=1;}}
+				if (jugadores[j].estaMuerto) {c+=1;}
+			}
 		}
 		
 		if( c==jugadores.length|| entorno.estaPresionada(entorno.TECLA_CTRL)) { //c=jugadores.lenght significa que los dos jugadores murieron
+			posInicial = entorno.ancho()/2;
 			for (int j=0; j<jugadores.length;j++) {
-				jugadores[j]=null;
+				jugadores[j] = null;
+				jugadores[j] = new Jugador(posInicial-50, entorno.alto()-(entorno.alto()/10));
+				posInicial += 100;
+				
 			}
-			jugadores[0] = new Jugador(entorno.ancho()/2, entorno.alto()-(entorno.alto()/10));
-			//jugadores[1] = new Jugador(entorno.ancho()/2+50, entorno.alto()-(entorno.alto()/10));
+			
 			puntaje=0;
 			muertos=0;
 			contadorEnemigos=0;
@@ -186,8 +217,10 @@ public class Juego extends InterfaceJuego {
 				p[i] = null;
 				p[i] = new Piso(entorno.alto()/p.length + i * (entorno.alto() / p.length), entorno);
 			}
+			lavaVel=0;
+			lava.y=entorno.alto()*2;
 			for (int j=0; j<jugadores.length;j++) {
-				jugadores[0].estaMuerto=false;
+				jugadores[j].estaMuerto=false;
 			}
 		}
 		
@@ -229,7 +262,7 @@ public class Juego extends InterfaceJuego {
 							bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
 						} 
 				
-						if (!enemigos[i].dir && enemigos[i].x>jugadores[0].x){
+						if (!enemigos[i].dir && enemigos[i].x>jugadores[j].x){
 						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
 						}
 					}
@@ -241,8 +274,10 @@ public class Juego extends InterfaceJuego {
 		
 		for (int i = 0; i < bombas.length; i++) {
 			for (int j = 0; j<jugadores.length ; j++) {
-				if (detectarColisionBala(jugadores[j], bombas[i])) {
-					jugadores[j].estaMuerto = true;
+				if(jugadores[j] != null) {
+					if (detectarColisionBala(jugadores[j], bombas[i])) {
+						jugadores[j].estaMuerto = true;
+					}
 				}
 			}
 		}
@@ -258,66 +293,69 @@ public class Juego extends InterfaceJuego {
 		//EJECUCIÓN DE METODOS DE LOS JUGADORES
 		if(jugadores.length > 1) {
 			if (jugadores[1]!=null){
-				jugadores[1].spriteDer = Herramientas.cargarImagen("bomba.png");
-				jugadores[1].spriteIzq = Herramientas.cargarImagen("bomba.png");
+				jugadores[1].spriteDer = Herramientas.cargarImagen("BlueberryPiRight.png");
+				jugadores[1].spriteIzq = Herramientas.cargarImagen("BlueberryPiLeft.png");
 			}
 		}
 		
 		
-		for (int i=0; i<jugadores.length; i++) {
+		if(balas.length > 1) {
+			if (balas[1]!=null){
+				balas[1].spriteDer = Herramientas.cargarImagen("arandanoDer.png");
+				balas[1].spriteIzq = Herramientas.cargarImagen("arandanoIzq.png");
+			}
+		}
+		
+		
+		for (int j=0; j<jugadores.length; j++) {
 			
-			//jugadores[i].mostrar(entorno);
-			//jugadores[i].movVertical(entorno, p);
-			
-			if (jugadores[i]!=null) {
-				jugadores[i].mostrar(entorno);
-				jugadores[i].movVertical(entorno, p);
-				if (jugadores[i].estaMuerto) { 
-					jugadores[i].x=entorno.ancho()+100;
+			if (jugadores[j]!=null) {
+				
+				//mostrar el jugador
+				jugadores[j].mostrar(entorno);
+				jugadores[j].movVertical(entorno, p);
+				if (jugadores[j].estaMuerto) { 
+					jugadores[j].y= entorno.alto()+100;
 					
-					}
-			}
-		
-		
-		//Detectar colisiones con el piso
-			if (jugadores[i]!=null) {
-			if(detectarApoyo(jugadores[i], p)) {
-				jugadores[i].estaApoyado = true;
-			}
-		
-			else {
-			jugadores[i].estaApoyado = false;
-			}
-		
-			if(detectarColision (jugadores[i], p)) {
-			jugadores[i].estaSaltando = false;
-			jugadores[i].contadorSalto = 0;
-			}
-		
-			if (chocoDer(jugadores[i], p) && (jugadores[i].estaSaltando||jugadores[i].estaCayendo) && entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
-			jugadores[i].x+=2;
-			jugadores[i].estaSaltando=false;
-			jugadores[i].estaCayendo=true;
-			jugadores[i].estaApoyado=false;
-			}
-		
-			if (chocoIzq(jugadores[i], p)  && (jugadores[0].estaSaltando||jugadores[0].estaCayendo) && entorno.estaPresionada(entorno.TECLA_DERECHA)) {
-			jugadores[i].x-=2;
-			jugadores[i].estaSaltando=false;
-			jugadores[i].estaCayendo=true;
-			jugadores[i].estaApoyado=false;
-			}
+				}
+				
+				//Detectar colisiones con el piso
+				if(detectarApoyo(jugadores[j], p)) {
+					jugadores[j].estaApoyado = true;
+				}
+				else {
+					jugadores[j].estaApoyado = false;
+				}
 			
-		
-		//Detectar colisiones con el enemigo
-			for (int j=0; j<enemigos.length;j++) {
-				if (enemigos[j]!=null && jugadores[i]!=null) {
-					if(detectarColisionEnemigo(jugadores[i], enemigos[j])) {
-					jugadores[i].estaMuerto = true;
+				if(detectarColision (jugadores[j], p)) {
+					jugadores[j].estaSaltando = false;
+					jugadores[j].contadorSalto = 0;
+				}
+			
+				if (chocoDer(jugadores[j], p) && (jugadores[j].estaSaltando||jugadores[j].estaCayendo) && entorno.estaPresionada(entorno.TECLA_IZQUIERDA)) {
+					jugadores[j].x+=2;
+					jugadores[j].estaSaltando=false;
+					jugadores[j].estaCayendo=true;
+					jugadores[j].estaApoyado=false;
+				}
+			
+				if (chocoIzq(jugadores[j], p)  && (jugadores[j].estaSaltando||jugadores[j].estaCayendo) && entorno.estaPresionada(entorno.TECLA_DERECHA)) {
+					jugadores[j].x-=2;
+					jugadores[j].estaSaltando=false;
+					jugadores[j].estaCayendo=true;
+					jugadores[j].estaApoyado=false;
+				}
+				
+			
+				//Detectar colisiones con el enemigo
+				for (int i=0; i<enemigos.length;i++) {
+					if (enemigos[i]!=null && jugadores[j]!=null) {
+						if(detectarColisionEnemigo(jugadores[j], enemigos[i])) {
+						jugadores[j].estaMuerto = true;
+						}
 					}
 				}
 			}
-		}
 		}
 		
 		
@@ -394,15 +432,46 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 		
+		//Creación de la lava
 		
-		//Ganar el juego
-		if((jugadores[0].x <= entorno.ancho()/2 + 15 && jugadores[0].x >= entorno.ancho()/2 - 15) && jugadores[0].y <= 90){
-			
-			entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1); //revisar el tema de la escala
-			jugadores[0].velocidad =0;
+		lava = new Piso(entorno.alto()*2-lavaVel, entorno); 
+		lava.mostrar(entorno); 
+		lavaVel+=1; 
+		entorno.dibujarImagen(pinkLava, entorno.ancho()/2, lava.y+430, 0);
+		
+		for(int j=0; j<jugadores.length; j++) {
+			if (jugadores[j]!=null) {
+				if (detectarApoyo(jugadores[j], lava)) {
+					jugadores[j].estaMuerto=true;	
+				}
+			}
+		}
+		
+		
+		for (int j=0; j<jugadores.length; j++) {
+			//Ganar el juego
+			if (jugadores[j]!=null) {
+				if((jugadores[j].x <= entorno.ancho()/2 + 15 && jugadores[j].x >= entorno.ancho()/2 - 15) && jugadores[j].y <= 90){
+					entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1);
+					jugadores[j].velocidad = 0;
+					lavaVel=0;
+				}
+			}
+		}
 
+		
+		
+		//PANTALLA DE INICIO (se dibuja al final de todo para que aparezca al frente del juego)
+		if(titulo != null) {
+			entorno.dibujarImagen(titulo, entorno.ancho()/2,entorno.alto()/2, 0,1);
+		}
+		
+		if(entorno.estaPresionada(entorno.TECLA_ESPACIO)){
+			titulo=null;
 		}
 	}
+	
+	
 	
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {

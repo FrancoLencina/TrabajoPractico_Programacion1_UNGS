@@ -34,9 +34,9 @@ public class Jugador extends Entidad {
 	public void moverse(boolean dirMov, Entorno e) {
 		if (estaApoyado || estaSaltando || estaCayendo) {
 			if (dirMov) {
-				this.x += 1;
+				this.x += velocidad;
 			} else{
-				this.x -= 1;
+				this.x -= velocidad;
 			}
 			this.dir = dirMov;
 			

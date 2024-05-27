@@ -10,6 +10,7 @@ import entorno.Herramientas;
 
 public class Entidad {
 		double x, y;
+		int velocidad = 1;
 		Image spriteIzq;
 		Image spriteDer;
 		boolean dir; // false = Izq
