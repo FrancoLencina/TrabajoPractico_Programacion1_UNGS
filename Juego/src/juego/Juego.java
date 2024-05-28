@@ -1,16 +1,13 @@
 package juego;
-
 import java.awt.Color;
 import java.awt.Image;
-//import java.awt.Rectangle;
-
 import entorno.Entorno;
 import entorno.Herramientas;
 import entorno.InterfaceJuego;
 
 public class Juego extends InterfaceJuego {
 
-	// El objeto Entorno que controla el tiempo y otros
+	// El Entorno
 	private Entorno entorno;
 	//Entidades
 	Jugador[] jugadores;
@@ -27,6 +24,8 @@ public class Juego extends InterfaceJuego {
 	Image pinkLava;
 	Image gato;
 	//Variables Globales
+	boolean inicioJuego = false;
+	boolean multijugador = false;
 	int puntaje = 0;
 	int muertos = 0;
 	int contadorEnemigos = 0;
@@ -40,27 +39,29 @@ public class Juego extends InterfaceJuego {
 		//Inicializa el objeto entorno
 		this.entorno = new Entorno(this, "Juego", 800,600);
 		
+		posInicial = entorno.ancho()/2-50;
+		
+		//Se Cargan las imagenes correspondientes
 		titulo = Herramientas.cargarImagen("titulo.png");
 		background = Herramientas.cargarImagen("fondo.jpg");
 		gato = Herramientas.cargarImagen("StrawberryCat.png");
 		pinkLava = Herramientas.cargarImagen("pink lava.png");
+		
 		//Generación de pisos
 				p = new Piso[5];
 				for(int i = 0; i < p.length; i++) {
 					p[i] = new Piso(entorno.alto()/p.length + i * (entorno.alto() / p.length), entorno);
 				}
 				
+		//-------------------------------------------INICIALIZACIÓN DE ENTIDADES-------------------------------------------------------------//
 				
-				
-				
-		//Inicialización de las Entidades
 		jugadores = new Jugador[2]; //El array ya tiene espacio para dos jugadores
-		posInicial = entorno.ancho()/2;
-		jugadores[0] = new Jugador(posInicial-50, entorno.alto()-(entorno.alto()/10));
-		posInicial += 100;
-		enemigos = new Enemigo[1];//(p.length-1)*2
+		jugadores[0] = new Jugador(posInicial, entorno.alto()-(entorno.alto()/10));
+		jugadores[1] = new Jugador(-200, entorno.alto()-(entorno.alto()/10));
+		enemigos = new Enemigo[(p.length-1)*2]; 
 		double yInicial= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
 		double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
+		//Generamos 2 enemigos por piso
 		for (int i=0; i<enemigos.length;i++) {
 			enemigos[i] = new Enemigo((int) (xInicial), yInicial);
 			contadorEnemigos += 1;
@@ -84,39 +85,38 @@ public class Juego extends InterfaceJuego {
 		this.entorno.iniciar();
 	}
 
+	//Procesamiento de un instante de tiempo
 	public void tick() {
 		
 		//Cargar Fondo
-		
 		entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1); //revisar el tema de la escala
 		
-		if(jugadores[1] == null) {
+		//Dibujamos el texto para insertar el 2do jugador (lo hacemos primero porque el tamaño de la fuente es distinto a los demás textos)
+		if(!multijugador) {
 	       	entorno.cambiarFont("Serif", 20, Color.WHITE);
 	       	entorno.escribirTexto(insertarJugador, 10 , entorno.alto()- 60);
        }
 		
+		//Dibujamos Puntaje y Enemigos eliminados
         entorno.cambiarFont("Serif", 40, Color.WHITE);
         String texto = "Puntos: " + puntaje; 
         String texto2 = "Enemigos eliminados: " + muertos;
         entorno.escribirTexto(texto, 10, entorno.alto()/20);
         entorno.escribirTexto(texto2, entorno.ancho()-410, entorno.alto()/20); //410 es aprox el tamaño del texto2
         
-        //Dibujar al gato (meta)
+        //Dibujamos al gato (meta)
 		entorno.dibujarImagen(gato, entorno.ancho()/2,78,0,0.1);
 	 
-		
-		//Procesamiento de un instante de tiempo
+		//Dibujamos los pisos
 		for(int i = 0; i < p.length; i++) {
 			p[i].mostrar(entorno);
 		}
 		
+		//--------------------------------------------------------CONTROLES------------------------------------------------------------------//
 		
-		if(entorno.estaPresionada(entorno.TECLA_INSERT) && jugadores[1] == null) {
-			jugadores[1] = new Jugador(posInicial, entorno.alto()-(entorno.alto()/10));
-			jugadores[1].estaMuerto = false; //It´s alive!
-		}
+		
 
-		//controles jugador 1
+		//CONTROLES JUGADOR 1
 		if(entorno.estaPresionada(entorno.TECLA_DERECHA)) {
 			jugadores[0].moverse(true,entorno);
 		}
@@ -142,8 +142,8 @@ public class Juego extends InterfaceJuego {
 			jugadores[0].moverse(false,entorno);
 		}
 		
-		//controles jugador 2
-		if (jugadores.length>1 && jugadores[1]!=null){
+		//CONTROLES JUGADOR 2
+		if (jugadores.length>1 && multijugador){
 			if(entorno.estaPresionada('D')) {
 				jugadores[1].moverse(true,entorno);
 			}
@@ -171,7 +171,9 @@ public class Juego extends InterfaceJuego {
 		}
 		
 		
-		//REINICIO DEL JUEGO
+		//----------------------------------------------------REINCIO DEL JUEGO--------------------------------------------------------------//
+		
+		//Chequea si los jugadores estan muertos
 		int c=0;
 		for (int j = 0; j<jugadores.length;j++) {
 			if (jugadores[j]!=null) {
@@ -180,12 +182,17 @@ public class Juego extends InterfaceJuego {
 		}
 		
 		if( c==jugadores.length|| entorno.estaPresionada(entorno.TECLA_CTRL)) { //c=jugadores.lenght significa que los dos jugadores murieron
-			posInicial = entorno.ancho()/2;
 			for (int j=0; j<jugadores.length;j++) {
-				jugadores[j] = null;
-				jugadores[j] = new Jugador(posInicial-50, entorno.alto()-(entorno.alto()/10));
-				posInicial += 100;
-				
+				//Si hay dos jugadores, se reinicia el juego con ambos en pantalla. Si no, solo el jugador 1.
+				if (multijugador) {
+					jugadores[j] = null;
+					jugadores[0] = new Jugador(posInicial, entorno.alto()-(entorno.alto()/10));
+					jugadores[1] = new Jugador(posInicial+100, entorno.alto()-(entorno.alto()/10));
+				}
+				else {
+					jugadores[0] = null;
+					jugadores[0] = new Jugador(posInicial, entorno.alto()-(entorno.alto()/10));
+				}
 			}
 			
 			puntaje=0;
@@ -219,78 +226,36 @@ public class Juego extends InterfaceJuego {
 			}
 			lavaVel=0;
 			lava.y=entorno.alto()*2;
-			for (int j=0; j<jugadores.length;j++) {
-				jugadores[j].estaMuerto=false;
-			}
-		}
-		
-		//COMPORTAMIENTO DE LA BOMBA
-		for(int i = 0; i < bombas.length; i++) {
-			if(bombas[i] != null) {
-				bombas[i].spriteDer = Herramientas.cargarImagen("bomba.png");
-				bombas[i].spriteIzq = Herramientas.cargarImagen("bomba.png");
-				bombas[i].mostrar(entorno);
-				bombas[i].moverse();
-			}
-		//que la bomba desaparezca al tocar el borde de la pantalla
 			
-			if(bombas[i] != null && (bombas[i].x < -0.1 * entorno.ancho() 
-				|| bombas[i].x > entorno.ancho() * 1.1)) {
-				bombas[i] = null;
-					
-				}
+			for (int j = 0; j< jugadores.length; j++) {
+				jugadores[j].estaMuerto = false;
+			}
+			
+		}
+
+		//------------------------------------------------------------LAVA-------------------------------------------------------------------//
 		
-		//que desaparezca una bomba al tocar la bala
-			for (int b=0; b<balas.length; b++) {
-				if(bombas[i] != null && balas[b]!=null) {
-					if(balaContraBomba(balas[b], bombas[i])) {
-						bombas[i]=null;
-						puntaje+=1;
-					}
-				}
+		lava = new Piso(entorno.alto()*2-lavaVel, entorno); 
+		lava.mostrar(entorno); 
+		
+		//Mover la lava hacia arriba
+		if(inicioJuego) {
+			lavaVel+=1;
+		}
+		
+		entorno.dibujarImagen(pinkLava, entorno.ancho()/2, lava.y+430, 0);
+		
+		//------------------------------------------------METODOS DE JUGADORES---------------------------------------------------------------//
+			
+		//Insertar un nuevo jugador
+		if (lava.y > jugadores[1].y) {
+			if(entorno.estaPresionada(entorno.TECLA_INSERT) && !multijugador) {
+				jugadores[1].x = posInicial+100;
+				multijugador = true;	
 			}
 		}
 		
-		//Disparo del enemigo
-		
-					
-		for (int i = 0 ; i < enemigos.length ; i++) {
-			for (int j = 0 ; j < jugadores.length ; j++) {
-				if (enemigos[i] != null && jugadores[j]!=null) {
-					if( bombas[i] == null && Math.abs(enemigos[i].y-jugadores[j].y) < 5) {
-						if (enemigos[i].dir && enemigos[i].x<jugadores[j].x){
-							bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
-						} 
-				
-						if (!enemigos[i].dir && enemigos[i].x>jugadores[j].x){
-						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
-						}
-					}
-				}
-			}
-		}
-		
-		//Morir al tocar una bomba
-		
-		for (int i = 0; i < bombas.length; i++) {
-			for (int j = 0; j<jugadores.length ; j++) {
-				if(jugadores[j] != null) {
-					if (detectarColisionBala(jugadores[j], bombas[i])) {
-						jugadores[j].estaMuerto = true;
-					}
-				}
-			}
-		}
-		
-		//Eliminar la bomba perteneciente a un enemigo específico cuando éste muere
-		for (int i = 0; i < bombas.length; i++) {
-			if (enemigos[i]==null) {
-				bombas[i] = null;
-			}
-		}
-		
-	
-		//EJECUCIÓN DE METODOS DE LOS JUGADORES
+		//Cargar el sprite del segundo jugador
 		if(jugadores.length > 1) {
 			if (jugadores[1]!=null){
 				jugadores[1].spriteDer = Herramientas.cargarImagen("BlueberryPiRight.png");
@@ -298,7 +263,7 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 		
-		
+		//Cargar el sprite de las balas del segundo jugador
 		if(balas.length > 1) {
 			if (balas[1]!=null){
 				balas[1].spriteDer = Herramientas.cargarImagen("arandanoDer.png");
@@ -308,15 +273,14 @@ public class Juego extends InterfaceJuego {
 		
 		
 		for (int j=0; j<jugadores.length; j++) {
-			
 			if (jugadores[j]!=null) {
 				
 				//mostrar el jugador
 				jugadores[j].mostrar(entorno);
-				jugadores[j].movVertical(entorno, p);
+				
+				//Quitar al jugador de la pantalla al morir, mientras haya un jugador vivo
 				if (jugadores[j].estaMuerto) { 
 					jugadores[j].y= entorno.alto()+100;
-					
 				}
 				
 				//Detectar colisiones con el piso
@@ -355,16 +319,35 @@ public class Juego extends InterfaceJuego {
 						}
 					}
 				}
+				
+				//Detectar colisiones con la bomba
+				for (int i = 0; i < bombas.length; i++) {
+					if (detectarColisionBala(jugadores[j], bombas[i])) {
+						jugadores[j].estaMuerto = true;
+					}
+				}
+				
+				//Detectar colisión con la lava
+				if (lava.y<jugadores[j].getPiso()+48) {
+					jugadores[j].estaMuerto=true;	
+				}
 			}
 		}
 		
+		if (!multijugador) {
+			if (jugadores[0].estaMuerto) {jugadores[1].estaMuerto = true;}
+		}
 		
+		//Activar la gravedad para cada jugador
+		jugadores[0].movVertical(entorno, p);
+		if (multijugador && !jugadores[1].estaMuerto) {
+			jugadores[1].movVertical(entorno, p);
+		}
 		
-		//EJECUCIÓN DE METODOS DEL ENEMIGO
+		//-------------------------------------------------METODOS DEL ENEMIGO---------------------------------------------------------------//
+		
 		for (int i=0; i<enemigos.length;i++) {
 			if (enemigos[i]!=null) {
-				
-				
 				//Mostrar
 				enemigos[i].mostrar(entorno);
 				
@@ -382,33 +365,27 @@ public class Juego extends InterfaceJuego {
 					enemigos[i].estaApoyado = false;
 				}
 			}
-		}
-		
-		//Al quedar solo un enemigo se genera uno nuevo
-		
-		for (int i=0; i<enemigos.length; i++) {
+			
+			//Al quedar solo un enemigo se genera uno nuevo
 			if (contadorEnemigos<2 && enemigos[i]== null) {
 				enemigos[i] = new Enemigo(Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04, -30);
 				contadorEnemigos+=1;
 			}
+			
+			if (lava.y<enemigos[i].getPiso()+50) {
+				enemigos[i]=null;
+			}
 		}
 		
-	
+		//-------------------------------------------------COMPORTAMIENTO DE LAS BALAS-------------------------------------------------------//
 		
-		
-		
-		
-		//COMPORTAMIENTO DE LA BALA
-		
+		//DEL JUGADOR
 		for (int b=0; b<balas.length; b++) {
 			if(balas[b] != null) {
 				balas[b].mostrar(entorno);
 				balas[b].moverse();
 			}
 		
-		
-			
-			
 			//Detectar disparo
 			for (int i=0; i<enemigos.length;i++) {
 				if (enemigos[i] != null) {
@@ -424,7 +401,6 @@ public class Juego extends InterfaceJuego {
 		}
 		
 		//Hacer que la bala desaparezca al tocar el borde de la pantalla
-		
 		for (int b=0; b<balas.length; b++) {
 			if( balas[b] != null && (balas[b].x < -0.1 * entorno.ancho() 
 					|| balas[b].x > entorno.ancho() * 1.1)) {
@@ -432,24 +408,62 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 		
-		//Creación de la lava
+		//DEL ENEMIGO
+		for(int i = 0; i < bombas.length; i++) {
+			if(bombas[i] != null) {
+				bombas[i].spriteDer = Herramientas.cargarImagen("bomba.png");
+				bombas[i].spriteIzq = Herramientas.cargarImagen("bomba.png");
+				bombas[i].mostrar(entorno);
+				bombas[i].moverse();
+			}
+			
+		//que la bomba desaparezca al tocar el borde de la pantalla
+			if(bombas[i] != null && (bombas[i].x < -0.1 * entorno.ancho() 
+				|| bombas[i].x > entorno.ancho() * 1.1)) {
+					bombas[i] = null;	
+			}
 		
-		lava = new Piso(entorno.alto()*2-lavaVel, entorno); 
-		lava.mostrar(entorno); 
-		lavaVel+=1; 
-		entorno.dibujarImagen(pinkLava, entorno.ancho()/2, lava.y+430, 0);
-		
-		for(int j=0; j<jugadores.length; j++) {
-			if (jugadores[j]!=null) {
-				if (detectarApoyo(jugadores[j], lava)) {
-					jugadores[j].estaMuerto=true;	
+		//que desaparezca una bomba al tocar la bala
+			for (int b=0; b<balas.length; b++) {
+				if(bombas[i] != null && balas[b]!=null) {
+					if(balaContraBomba(balas[b], bombas[i])) {
+						bombas[i]=null;
+						puntaje+=1;
+					}
 				}
 			}
 		}
 		
+		//Disparo del enemigo	
+		for (int i = 0 ; i < enemigos.length ; i++) {
+			for (int j = 0 ; j < jugadores.length ; j++) {
+				if (enemigos[i] != null && jugadores[j]!=null) {
+					if( bombas[i] == null && Math.abs(enemigos[i].y-jugadores[j].y) < 5){
+						
+						//Si mira para la derecha y el jugador está a la derecha
+						if (enemigos[i].dir && enemigos[i].x<jugadores[j].x){
+							bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
+						} 
+						//Si mira para la izquierda y el jugador está a la izquierda
+						if (!enemigos[i].dir && enemigos[i].x>jugadores[j].x){
+						bombas[i] = new Bala(enemigos[i].x, enemigos[i].y, enemigos[i].dir);
+						}
+					}
+				}
+			}
+		}
 		
+		//Eliminar la bomba perteneciente a un enemigo específico cuando éste muere
+		for (int i = 0; i < bombas.length; i++) {
+			if (enemigos[i]==null) {
+				bombas[i] = null;
+			}
+		}
+		
+		//---------------------------------------------------GANAR EL JUEGO------------------------------------------------------------------//
+		
+		//Llamamos a estos metodos al final para poder dibujar una imagen por encima de la pantalla principal
 		for (int j=0; j<jugadores.length; j++) {
-			//Ganar el juego
 			if (jugadores[j]!=null) {
 				if((jugadores[j].x <= entorno.ancho()/2 + 15 && jugadores[j].x >= entorno.ancho()/2 - 15) && jugadores[j].y <= 90){
 					entorno.dibujarImagen(background, entorno.ancho()/2,entorno.alto()/2, 0,1);
@@ -459,28 +473,27 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 
+		//--------------------------------------------------PANTALLA DE INICIO---------------------------------------------------------------//
 		
-		
-		//PANTALLA DE INICIO (se dibuja al final de todo para que aparezca al frente del juego)
+		//Llamamos a estos metodos al final para poder dibujar una imagen por encima de la pantalla principal
 		if(titulo != null) {
 			entorno.dibujarImagen(titulo, entorno.ancho()/2,entorno.alto()/2, 0,1);
 		}
 		
 		if(entorno.estaPresionada(entorno.TECLA_ESPACIO)){
+			inicioJuego = true;
 			titulo=null;
 		}
 	}
 	
-	
-	
+	//INICIO DEL OBJETO JUEGO
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		Juego juego = new Juego();
 	}
 	
 	
-	
-	//Metodos de colision las entodades con el bloque
+	//METODOS DE COLISIÓN DE LAS ENTIDADES CON EL PISO
 	public boolean detectarApoyo(Entidad ju, Bloque bl) {
 		return Math.abs((ju.getPiso() - bl.getTecho())) < 2 && 
 				(ju.getIzquierdo() < (bl.getDerecho())) &&
@@ -539,8 +552,6 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	
-	//Metodo de colision de los costados del jugador con el bloque, para que no los transpase al saltar en diagonal
 	public boolean detectarCostado(Entidad ju, Bloque bl) {
 		return (Math.abs(ju.getDerecho() - bl.getIzquierdo()) < 1.5 ||
 				Math.abs(ju.getIzquierdo() - bl.getDerecho()) < 1.5) &&
@@ -594,16 +605,14 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	
-	
-	//Metodo de detectar la colison del jugador con el enemigo
+	//METODO DE COLISIÓN DEL JUGADOR CON EL ENEMIGO
 	public boolean detectarColisionEnemigo(Entidad ju, Entidad en) {
 		return Math.abs((ju.getPiso() - en.getPiso())) < 3.5 && 
 				(ju.getIzquierdo() < (en.getDerecho())) &&
 				(ju.getDerecho() > (en.getIzquierdo()));		
 	}
 	
-	//Metodo de detectar la colison del jugador con la bala
+	//METODO DE COLISIÓN DE LAS ENTIDADES CON LAS BALAS
 	public boolean detectarColisionBala(Entidad en, Bala b) {
 		if (b!=null) {
 			return ((Math.abs(b.getDerecho() - en.getIzquierdo()) < 3.5 ||
@@ -622,8 +631,7 @@ public class Juego extends InterfaceJuego {
 		return false;
 	}
 	
-	
-	//Metodo de detectar la colison de la bala y la bomba
+	//METODO DE COLISIÓN DE LA BALA CON LA BOMBA
 	public boolean balaContraBomba (Bala bom, Bala bal) {
 		if (bal!=null) {
 			return ((Math.abs(bal.getDerecho() - bom.getIzquierdo()) < 3.5 ||
@@ -633,6 +641,4 @@ public class Juego extends InterfaceJuego {
 		}
 		return false;
 	}
-	
-	
 }

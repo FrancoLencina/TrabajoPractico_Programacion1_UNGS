@@ -1,9 +1,5 @@
 package juego;
-
-import java.awt.Color;
 import java.awt.Image;
-import java.awt.Rectangle;
-
 import entorno.Entorno;
 import entorno.Herramientas;
 
@@ -13,7 +9,6 @@ public class Bloque {
 	boolean rompible; //true = rompible
 	boolean hayColision = false;
 	boolean existe = true;
-	Rectangle hitbox;
 	
 	public Bloque(double x, double y) {
 		this.x = x;
@@ -32,7 +27,6 @@ public class Bloque {
 		escala = 0.2;
 		alto = sprite.getHeight(null)*escala;
 		ancho = sprite.getWidth(null)*escala;
-		hitbox = new Rectangle((int)this.x,(int)this.y,(int)this.ancho,(int)this.alto);
 	}
 	
 	public void mostrar(Entorno e) {

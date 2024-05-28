@@ -17,6 +17,7 @@ public class Piso {
 			bloques[i] = new Bloque((i+0.5)* testigo.ancho, y);
 		}
 		
+		//Establecemos que los bloques debajo de la meta sean siempre irrompibles.
 		if((bloques[10].rompible || bloques[11].rompible)  && y == e.alto()/5 ) {
 			bloques[10].rompible = false;
 			bloques[11].rompible = false;
