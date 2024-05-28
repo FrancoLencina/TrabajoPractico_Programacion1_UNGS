@@ -18,10 +18,10 @@ public class Bloque {
 			rompible = false;
 		}
 		if(rompible) {
-			sprite = Herramientas.cargarImagen("pasto2.png");
+			sprite = Herramientas.cargarImagen("imagenes/pasto2.png");
 		}
 		else {
-			sprite = Herramientas.cargarImagen("roca2.png");
+			sprite = Herramientas.cargarImagen("imagenes/roca2.png");
 		}
 		
 		escala = 0.2;

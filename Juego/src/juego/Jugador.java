@@ -12,8 +12,8 @@ public class Jugador extends Entidad {
 	public Jugador(double x, double y) {
 		this.x = x;
 		this.y = y;
-		spriteIzq = Herramientas.cargarImagen("RaspberryPiLeft.png");
-		spriteDer = Herramientas.cargarImagen("RaspberryPiRight.png");
+		spriteIzq = Herramientas.cargarImagen("imagenes/RaspberryPiLeft.png");
+		spriteDer = Herramientas.cargarImagen("imagenes/RaspberryPiRight.png");
 		contadorSalto = 0;
 		estaApoyado = false;
 		estaSaltando = false;

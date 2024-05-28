@@ -19,8 +19,8 @@ public class Entidad {
 		
 		
 		public Entidad() {
-			spriteIzq = Herramientas.cargarImagen("missigno.png");
-			spriteDer = Herramientas.cargarImagen("missigno.png");
+			spriteIzq = Herramientas.cargarImagen("imagenes/missigno.png");
+			spriteDer = Herramientas.cargarImagen("imagenes/missigno.png");
 			dir = true;
 			estaApoyado = false;
 			escala = 0.095;

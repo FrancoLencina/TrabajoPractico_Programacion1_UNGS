@@ -12,8 +12,8 @@ public class Bala {
 	public Bala(double x, double y, boolean direccion) {
 		this.x = x;
 		this.y = y;
-		spriteIzq = Herramientas.cargarImagen("frutillaIzq.png");
-		spriteDer = Herramientas.cargarImagen("frutillaDer.png");
+		spriteIzq = Herramientas.cargarImagen("imagenes/frutillaIzq.png");
+		spriteDer = Herramientas.cargarImagen("imagenes/frutillaDer.png");
 		dir = direccion;
 		escala = 0.04;
 		alto = spriteIzq.getHeight(null) * escala;

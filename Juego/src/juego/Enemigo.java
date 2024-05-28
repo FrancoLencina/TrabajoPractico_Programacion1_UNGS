@@ -8,8 +8,8 @@ public class Enemigo extends Entidad{
 		this.x = x;
 		this.y = y;
 		this.escala = 0.09;
-		spriteIzq = Herramientas.cargarImagen("AngryDogLeft.png");
-		spriteDer = Herramientas.cargarImagen("AngryDogRight.png");
+		spriteIzq = Herramientas.cargarImagen("imagenes/AngryDogLeft.png");
+		spriteDer = Herramientas.cargarImagen("imagenes/AngryDogRight.png");
 		this.estaApoyado = true;
 		this.alto = spriteIzq.getHeight(null) * escala;
 		this.ancho = spriteIzq.getWidth(null) * escala;
