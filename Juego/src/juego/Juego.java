@@ -63,7 +63,7 @@ public class Juego extends InterfaceJuego {
 		jugadores = new Jugador[2]; //El array ya tiene espacio para dos jugadores
 		jugadores[0] = new Jugador(posInicial, entorno.alto()-(entorno.alto()/10));
 		jugadores[1] = new Jugador(-200, entorno.alto()-(entorno.alto()/10));
-		enemigos = new Enemigo[(p.length-1)*2]; //
+		enemigos = new Enemigo[(p.length-1)*2];
 		double yInicial= entorno.alto()-(entorno.alto()/10)-entorno.alto()/p.length;
 		double xInicial= Math.random()*entorno.ancho()*0.95 + entorno.ancho()*0.04;
 		//Generamos 2 enemigos por piso
@@ -235,7 +235,7 @@ public class Juego extends InterfaceJuego {
 			for (int j = 0; j< jugadores.length; j++) {
 				jugadores[j].estaMuerto = false;
 			}
-			
+			ganoJuego=false;
 		}
 
 		//------------------------------------------------------------LAVA-------------------------------------------------------------------//
