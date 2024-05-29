@@ -235,7 +235,6 @@ public class Juego extends InterfaceJuego {
 			for (int j = 0; j< jugadores.length; j++) {
 				jugadores[j].estaMuerto = false;
 			}
-			ganoJuego=false;
 		}
 
 		//------------------------------------------------------------LAVA-------------------------------------------------------------------//
