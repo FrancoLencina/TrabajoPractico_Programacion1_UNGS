@@ -283,7 +283,7 @@ public class Juego extends InterfaceJuego {
 				jugadores[j].mostrar(entorno);
 				
 				//Quitar al jugador de la pantalla al morir, mientras haya un jugador vivo
-				if (jugadores[j].estaMuerto) { 
+				if (jugadores[j].estaMuerto && multijugador) { 
 					jugadores[j].y= entorno.alto()+100;
 				}
 				
